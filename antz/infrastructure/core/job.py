@@ -2,12 +2,12 @@
 
 Each job performs one user-assigned task and returns its state.
 """
-from antz.infrastructure.config.base import JobConfig, PARAMETERS_TYPE
-from antz.infrastructure.status import Status
+from antz.infrastructure.config.base import JobConfig, PARAMETERS_TYPE, PipelineConfig
+from antz.infrastructure.core.status import Status
 from typing import Callable
 import importlib
 
-def run_job(config: JobConfig) -> Status:
+def run_job(config: JobConfig, submit_pipeline: Callable[[PipelineConfig], None]) -> Status:
 
 
     status: Status = Status.STARTING
@@ -18,7 +18,7 @@ def run_job(config: JobConfig) -> Status:
         return Status.ERROR
 
     try:
-        ret = func_handle(config.parameters)
+        ret = func_handle(config.parameters, submit_pipeline)
         if isinstance(ret, Status):
             status = ret
         else:
@@ -28,7 +28,7 @@ def run_job(config: JobConfig) -> Status:
         status = Status.ERROR
     return status
 
-def _get_func(config: JobConfig) -> Callable[[PARAMETERS_TYPE], Status]:
+def _get_func(config: JobConfig) -> Callable[[PARAMETERS_TYPE, Callable[[PipelineConfig], None]], Status]:
     """Links to the function described by config
 
     Args:
