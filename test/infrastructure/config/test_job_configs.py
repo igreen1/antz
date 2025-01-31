@@ -1,5 +1,5 @@
 
-from antz.instrastructure.config.base import JobConfig
+from antz.infrastructure.config.base import JobConfig
 import json
 import uuid
 from pydantic import ValidationError
@@ -63,3 +63,20 @@ def test_empty_job_parameters() -> None:
             'function': 'some func',
         }
         _j1 = JobConfig.model_validate(job_config)
+
+
+def test_job_frozen_attr() -> None:
+    
+    job_config = {
+        'type': 'job',
+        'name': 'my job',
+        'function': 'some func',
+        'parameters': {
+        }
+    }
+    j1 = JobConfig.model_validate(job_config)
+
+
+    with pytest.raises(ValidationError):
+        j1.type = 'pipeline' # type: ignore
+

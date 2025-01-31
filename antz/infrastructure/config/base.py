@@ -7,21 +7,23 @@ from typing import Literal, TypeAlias
 from pydantic import BaseModel, Field
 
 PRIMITIVE_TYPE: TypeAlias = str | int | float | bool
+PARAMETERS_TYPE: TypeAlias = (dict[str, PRIMITIVE_TYPE] | None)
 
-class JobConfig(BaseModel):
+class JobConfig(BaseModel, frozen=True):
     type: Literal['job']
     name: str = 'some job'
     id: uuid.UUID = Field(default_factory=uuid.uuid4, validate_default=True)
     function: str
-    parameters: dict[str, PRIMITIVE_TYPE] | None
+    parameters: PARAMETERS_TYPE
 
-class PipelineConfig(BaseModel):
+class PipelineConfig(BaseModel, frozen=True):
     type: Literal['pipeline']
     name: str = 'pipeline'
     curr_state: int = 0
     stages: list[JobConfig]
 
 
-class Config(BaseModel):
+class Config(BaseModel, frozen=True):
     variables: dict[str, PRIMITIVE_TYPE]
     config: PipelineConfig | JobConfig = Field(discriminator='type')
+
