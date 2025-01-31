@@ -1,0 +1,51 @@
+jobs are atomic tasks that complete and return
+
+pipelines run executors in sequences
+
+managers run executors in sets (in paralllel)
+
+a manager will create a config and submit to submitter
+
+a submitter will take a configuration and submit to relevant runner
+
+
+model config
+
+
+{
+    "variables": {
+        "hello": world
+    },
+    config: {
+        "type": "pipeline"
+        "name": "startup pipeline",
+        curr_state // default to 0
+        stages: [
+            {
+                "type": "job"
+                "function": copy,
+                src,
+                dst
+            },
+            {
+                "type": "job",
+                "function": cross_matrix,
+                matrix_location:,
+                template: {
+                    "type": "pipeline",
+                    "name": "analysis pipeline",
+                    stages: [
+                        {
+                            type: job,
+                            function: run_model
+                        },
+                        {
+                            type: job,
+                            function: analyze_model
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}
