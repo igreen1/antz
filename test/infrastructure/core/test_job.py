@@ -26,7 +26,7 @@ def test_getting_functions() -> None:
 
     job_config: dict = {
         "type": "job",
-        "function": "test.infrastructure.test_job.successful_function",
+        "function": "test.infrastructure.core.test_job.successful_function",
         "parameters": {},
     }
     jc = JobConfig.model_validate(job_config)
@@ -36,7 +36,7 @@ def test_getting_functions() -> None:
 
     job_config = {
         "type": "job",
-        "function": "test.infrastructure.test_job.failed_function",
+        "function": "test.infrastructure.core.test_job.failed_function",
         "parameters": {},
     }
     jc = JobConfig.model_validate(job_config)
@@ -47,7 +47,7 @@ def test_getting_functions() -> None:
 def test_running_job_success() -> None:
     job_config: dict = {
         "type": "job",
-        "function": "test.infrastructure.test_job.successful_function",
+        "function": "test.infrastructure.core.test_job.successful_function",
         "parameters": {},
     }
     jc = JobConfig.model_validate(job_config)
@@ -58,7 +58,7 @@ def test_running_job_success() -> None:
 def test_running_job_failure() -> None:
     job_config: dict = {
         "type": "job",
-        "function": "test.infrastructure.test_job.failed_function",
+        "function": "test.infrastructure.core.test_job.failed_function",
         "parameters": {},
     }
     jc = JobConfig.model_validate(job_config)
@@ -69,7 +69,7 @@ def test_running_job_failure() -> None:
 def test_running_job_exception() -> None:
     job_config: dict = {
         "type": "job",
-        "function": "test.infrastructure.test_job.error_function",
+        "function": "test.infrastructure.core.test_job.error_function",
         "parameters": {},
     }
     jc = JobConfig.model_validate(job_config)
@@ -80,7 +80,7 @@ def test_running_job_exception() -> None:
 def test_no_function_error() -> None:
     job_config: dict = {
         "type": "job",
-        "function": "test.infrastructure.test_job.NOSUCHFUNCTION",
+        "function": "test.infrastructure.core.test_job.NOSUCHFUNCTION",
         "parameters": {},
     }
 
@@ -91,7 +91,7 @@ def test_no_function_error() -> None:
 def test_not_a_callable() -> None:
     job_config: dict = {
         "type": "job",
-        "function": "test.infrastructure.test_job",
+        "function": "test.infrastructure.core.test_job",
         "parameters": {},
     }
 

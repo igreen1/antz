@@ -10,7 +10,8 @@ from antz.infrastructure.core.status import Status
 
 
 def run_job(
-    config: JobConfig, submit_pipeline: Callable[[PipelineConfig], None]
+    config: JobConfig,
+    submit_pipeline: Callable[[PipelineConfig], None]
 ) -> Status:
     """Run a job, which is the smallest atomic task of antz"""
 
