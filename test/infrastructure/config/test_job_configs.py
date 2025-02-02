@@ -2,15 +2,74 @@
 from antz.infrastructure.config.base import JobConfig
 import json
 import uuid
+from antz.infrastructure.core.status import Status
 from pydantic import ValidationError
 import pytest
+
+def fake_function(*args) -> Status:
+    return Status.ERROR
+
+def test_job_import() -> None:
+
+    job_config = {
+        'type': 'job',
+        'name': 'my job',
+        'function': 'test.infrastructure.config.test_job_configs.fake_function',
+        'parameters': {
+            's': 1
+        }
+    }
+    
+    j1 = JobConfig.model_validate(job_config)
+    assert j1.function == fake_function
+
+def test_failed_to_find_job() -> None:
+    job_config = {
+        'type': 'job',
+        'name': 'my job',
+        'function': 'test.infrastructure.config.test_job_configs.AGHS',
+        'parameters': {
+            's': 1
+        }
+    }
+    
+    with pytest.raises(ValidationError):
+        _ = JobConfig.model_validate(job_config)
+
+
+def test_not_a_callable() -> None:
+    job_config = {
+        'type': 'job',
+        'name': 'my job',
+        'function': 'test.infrastructure.config.test_job_configs',
+        'parameters': {
+            's': 1
+        }
+    }
+    
+    with pytest.raises(ValidationError):
+        _ = JobConfig.model_validate(job_config)
+
+def test_no_such_module() -> None:
+    job_config = {
+        'type': 'job',
+        'name': 'my job',
+        'function': 'test.infrastructure.configxxxx.test_job_configs',
+        'parameters': {
+            's': 1
+        }
+    }
+    
+    with pytest.raises(ValidationError):
+        _ = JobConfig.model_validate(job_config)
+
 
 def test_job_uuid_creation() -> None:
 
     job_config = {
         'type': 'job',
         'name': 'my job',
-        'function': 'some func',
+        'function': 'test.infrastructure.config.test_job_configs.fake_function',
         'parameters': {
             's': 1
         }
@@ -27,13 +86,11 @@ def test_job_uuid_creation() -> None:
 
 def test_job_uuid_override() -> None:
     
-    
-    
     job_config = {
         'type': 'job',
         "id": "cb13bc78-e4a2-4a69-8a54-04ef168d656e",
         'name': 'my job',
-        'function': 'some func',
+        'function': 'test.infrastructure.config.test_job_configs.fake_function',
         'parameters': {
             's': 1
         }
@@ -50,7 +107,7 @@ def test_empty_job_parameters() -> None:
     job_config = {
         'type': 'job',
         'name': 'my job',
-        'function': 'some func',
+        'function': 'test.infrastructure.config.test_job_configs.fake_function',
         'parameters': {
         }
     }
@@ -60,7 +117,7 @@ def test_empty_job_parameters() -> None:
         job_config = {
             'type': 'job',
             'name': 'my job',
-            'function': 'some func',
+            'function': 'test.infrastructure.config.test_job_configs.fake_function',
         }
         _j1 = JobConfig.model_validate(job_config)
 
@@ -70,7 +127,7 @@ def test_job_frozen_attr() -> None:
     job_config = {
         'type': 'job',
         'name': 'my job',
-        'function': 'some func',
+        'function': 'test.infrastructure.config.test_job_configs.fake_function',
         'parameters': {
         }
     }

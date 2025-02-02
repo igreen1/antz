@@ -18,7 +18,10 @@ def run_pipeline(config: PipelineConfig, submit_pipeline: Callable[[PipelineConf
     if config.curr_state < len(config.stages):
 
         curr_job = config.stages[config.curr_state]
-        ret = run_job(curr_job, submit_pipeline=submit_pipeline)
+        if isinstance(curr_job, PipelineConfig):
+            ret = run_pipeline(curr_job, submit_pipeline=submit_pipeline) # allows pipelines of pipelines
+        else:
+            ret = run_job(curr_job, submit_pipeline=submit_pipeline)
         if ret == Status.ERROR:
             restart(config, submit_pipeline=submit_pipeline) # optionally restart if setup for that
         elif not is_final(ret):
