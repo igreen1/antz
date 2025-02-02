@@ -1,19 +1,23 @@
 """Copy job will copy a file or directory to another location"""
-from antz.infrastructure.config.base import PARAMETERS_TYPE
-from antz.infrastructure.core.status import Status
 
 import os
-from pydantic import BaseModel
 import shutil
+
+from pydantic import BaseModel
+
+from antz.infrastructure.config.base import ParametersType
+from antz.infrastructure.core.status import Status
+
 
 class CopyParameters(BaseModel, frozen=True):
     """The parameters required for the copy command"""
+
     source: str
     destination: str
     infer_name: bool = False
 
 
-def copy(parameters: PARAMETERS_TYPE) -> Status:
+def copy(parameters: ParametersType) -> Status:
     """Copy file or directory from parameters.soruce to parameters.destination
 
     Parameters {
@@ -22,7 +26,7 @@ def copy(parameters: PARAMETERS_TYPE) -> Status:
     }
 
     Args:
-        parameters (PARAMETERS_TYPE): parameters for the copy function
+        parameters (ParametersType): parameters for the copy function
 
     Returns:
         Status: result of the job
@@ -39,10 +43,11 @@ def copy(parameters: PARAMETERS_TYPE) -> Status:
 
     if source_is_file:
         return _copy_file(copy_parameters)
-    
+
     return _copy_dir(copy_parameters)
 
-def _copy_file(copy_parameters: CopyParameters) -> Status: 
+
+def _copy_file(copy_parameters: CopyParameters) -> Status:
     """Copy a file from source to destination
 
     Args:
@@ -60,12 +65,13 @@ def _copy_file(copy_parameters: CopyParameters) -> Status:
 
     if os.path.exists(dst) and os.path.isdir(dst):
         return Status.ERROR
-    
+
     try:
         shutil.copyfile(src, dst)
         return Status.SUCCESS
-    except Exception as _exc:
+    except Exception as _exc:  # pylint: disable=broad-exception-caught
         return Status.ERROR
+
 
 def _copy_dir(copy_parameters: CopyParameters) -> Status:
     """Copy a directory from a source to destination
@@ -81,9 +87,9 @@ def _copy_dir(copy_parameters: CopyParameters) -> Status:
 
     if os.path.exists(dst) and os.path.isfile(dst):
         return Status.ERROR
-    
+
     try:
         shutil.copytree(src, dst)
         return Status.SUCCESS
-    except Exception as _exc:
+    except Exception as _exc:  # pylint: disable=broad-exception-caught
         return Status.ERROR

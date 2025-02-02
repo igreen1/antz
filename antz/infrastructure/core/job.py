@@ -2,13 +2,17 @@
 
 Each job performs one user-assigned task and returns its state.
 """
-from antz.infrastructure.config.base import JobConfig, PARAMETERS_TYPE, PipelineConfig
-from antz.infrastructure.core.status import Status
+
 from typing import Callable
-import importlib
 
-def run_job(config: JobConfig, submit_pipeline: Callable[[PipelineConfig], None]) -> Status:
+from antz.infrastructure.config.base import JobConfig, PipelineConfig
+from antz.infrastructure.core.status import Status
 
+
+def run_job(
+    config: JobConfig, submit_pipeline: Callable[[PipelineConfig], None]
+) -> Status:
+    """Run a job, which is the smallest atomic task of antz"""
 
     status: Status = Status.STARTING
     func_handle = config.function
@@ -18,10 +22,8 @@ def run_job(config: JobConfig, submit_pipeline: Callable[[PipelineConfig], None]
         if isinstance(ret, Status):
             status = ret
         else:
-            status = Status.ERROR # bad return type is an error
-    except Exception as _exc:
+            status = Status.ERROR  # bad return type is an error
+    except Exception as _exc:  # pylint: disable=broad-exception-caught
         # logging?
         status = Status.ERROR
     return status
-
-
