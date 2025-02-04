@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from antz.infrastructure.config.base import JobConfig, Config
+from antz.infrastructure.config.base import Config, JobConfig
 from antz.infrastructure.core.job import run_job
 from antz.infrastructure.core.status import Status
 

@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import importlib
 import uuid
-from typing import Any, Callable, Literal, Dict, TypeAlias
+from typing import Any, Callable, Dict, Literal, TypeAlias
 
 from pydantic import BaseModel, BeforeValidator, Field
 from typing_extensions import Annotated
@@ -16,12 +16,10 @@ from antz.infrastructure.core.status import Status
 PrimitiveType: TypeAlias = str | int | float | bool
 ParametersType: TypeAlias = Dict[str, PrimitiveType] | None
 SubmitFunctionType: TypeAlias = Callable[["Config"], None]
-JobFunctionType: TypeAlias = Callable[
-    [ParametersType, SubmitFunctionType], Status
-]
+JobFunctionType: TypeAlias = Callable[[ParametersType, SubmitFunctionType], Status]
 MutableJobFunctionType: TypeAlias = Callable[
-    [ParametersType, SubmitFunctionType, Dict[str, PrimitiveType], "PipelineConfig"], 
-    tuple[Status, "PipelineConfig", Dict[str, PrimitiveType]]
+    [ParametersType, SubmitFunctionType, Dict[str, PrimitiveType], "PipelineConfig"],
+    tuple[Status, "PipelineConfig", Dict[str, PrimitiveType]],
 ]
 
 
@@ -63,6 +61,7 @@ def _get_job_func(func_name_or_any: Any) -> JobFunctionType | None:
 
     return func
 
+
 class JobConfig(BaseModel, frozen=True):
     """Configuration of a job"""
 
@@ -75,9 +74,9 @@ class JobConfig(BaseModel, frozen=True):
 
 class MutableJobConfig(BaseModel, frozen=True):
     """A normal job but it can edit its parents configurations
-    This can obviously create some issues, but also is useful in quite a few cases. 
+    This can obviously create some issues, but also is useful in quite a few cases.
     USE WITH CARE"""
-    
+
     type: Literal["mutable_job"]
     name: str = "some job"
     id: uuid.UUID = Field(default_factory=uuid.uuid4, validate_default=True)

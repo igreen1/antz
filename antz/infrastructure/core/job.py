@@ -5,7 +5,13 @@ Each job performs one user-assigned task and returns its state.
 
 from typing import Callable, Dict
 
-from antz.infrastructure.config.base import MutableJobConfig, JobConfig, Config, PrimitiveType, PipelineConfig
+from antz.infrastructure.config.base import (
+    Config,
+    JobConfig,
+    MutableJobConfig,
+    PipelineConfig,
+    PrimitiveType,
+)
 from antz.infrastructure.core.status import Status
 from antz.infrastructure.core.variables import resolve_variables
 
@@ -13,7 +19,7 @@ from antz.infrastructure.core.variables import resolve_variables
 def run_job(
     config: JobConfig,
     variables: Dict[str, PrimitiveType],
-    submit_fn: Callable[[Config], None]
+    submit_fn: Callable[[Config], None],
 ) -> Status:
     """Run a job, which is the smallest atomic task of antz"""
 
@@ -38,7 +44,7 @@ def run_mutable_job(
     config: MutableJobConfig,
     variables: Dict[str, PrimitiveType],
     submit_fn: Callable[[Config], None],
-    pipeline_config: PipelineConfig
+    pipeline_config: PipelineConfig,
 ) -> tuple[Status, PipelineConfig, Dict[str, PrimitiveType]]:
     """Like a job, but it will return a new pipeline and variables context
 
@@ -61,13 +67,14 @@ def run_mutable_job(
     params = resolve_variables(config.parameters, variables)
 
     try:
-        ret = func_handle(
-            params, 
-            submit_fn, 
-            variables, 
-            pipeline_config
-        )
-        if isinstance(ret, tuple) and len(ret) == 3 and isinstance(ret[0], Status) and isinstance(ret[1], (PipelineConfig, dict)) and isinstance(ret[2], dict):
+        ret = func_handle(params, submit_fn, variables, pipeline_config)
+        if (
+            isinstance(ret, tuple)
+            and len(ret) == 3
+            and isinstance(ret[0], Status)
+            and isinstance(ret[1], (PipelineConfig, dict))
+            and isinstance(ret[2], dict)
+        ):
             # check output - don't trust unknown libraries
             status = ret[0]
             if isinstance(ret[1], dict):
