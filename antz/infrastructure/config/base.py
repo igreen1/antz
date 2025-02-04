@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import importlib
 import uuid
-from typing import Any, Callable, Literal, Mapping, TypeAlias
+from typing import Any, Callable, Literal, Dict, TypeAlias
 
 from pydantic import BaseModel, BeforeValidator, Field
 from typing_extensions import Annotated
@@ -14,9 +14,9 @@ from typing_extensions import Annotated
 from antz.infrastructure.core.status import Status
 
 PrimitiveType: TypeAlias = str | int | float | bool
-ParametersType: TypeAlias = Mapping[str, PrimitiveType] | None
+ParametersType: TypeAlias = Dict[str, PrimitiveType] | None
 JobFunctionType: TypeAlias = Callable[
-    [ParametersType, Callable[["PipelineConfig"], None]], Status
+    [ParametersType, Callable[["Config"], None]], Status
 ]
 
 

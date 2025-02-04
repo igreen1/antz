@@ -52,7 +52,7 @@ def test_running_job_success() -> None:
     }
     jc = JobConfig.model_validate(job_config)
 
-    assert run_job(jc, fake_submission) == Status.SUCCESS
+    assert run_job(jc, fake_submission, submit_fn=lambda *args: None) == Status.SUCCESS
 
 
 def test_running_job_failure() -> None:
@@ -63,7 +63,7 @@ def test_running_job_failure() -> None:
     }
     jc = JobConfig.model_validate(job_config)
 
-    assert run_job(jc, fake_submission) == Status.ERROR
+    assert run_job(jc, fake_submission, submit_fn=lambda *args: None) == Status.ERROR
 
 
 def test_running_job_exception() -> None:
@@ -74,7 +74,7 @@ def test_running_job_exception() -> None:
     }
     jc = JobConfig.model_validate(job_config)
 
-    assert run_job(jc, fake_submission) == Status.ERROR
+    assert run_job(jc, fake_submission, submit_fn=lambda *args: None) == Status.ERROR
 
 
 def test_no_function_error() -> None:
