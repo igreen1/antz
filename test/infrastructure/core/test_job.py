@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from antz.infrastructure.config.base import JobConfig, PipelineConfig
+from antz.infrastructure.config.base import JobConfig, Config
 from antz.infrastructure.core.job import run_job
 from antz.infrastructure.core.status import Status
 
@@ -18,7 +18,7 @@ def error_function(*args):
     raise Exception("Some error")
 
 
-def fake_submission(c: PipelineConfig) -> None:
+def fake_submission(c: Config) -> None:
     pass
 
 
@@ -52,7 +52,7 @@ def test_running_job_success() -> None:
     }
     jc = JobConfig.model_validate(job_config)
 
-    assert run_job(jc, fake_submission, submit_fn=lambda *args: None) == Status.SUCCESS
+    assert run_job(jc, variables={}, submit_fn=fake_submission) == Status.SUCCESS
 
 
 def test_running_job_failure() -> None:
@@ -63,7 +63,7 @@ def test_running_job_failure() -> None:
     }
     jc = JobConfig.model_validate(job_config)
 
-    assert run_job(jc, fake_submission, submit_fn=lambda *args: None) == Status.ERROR
+    assert run_job(jc, variables={}, submit_fn=fake_submission) == Status.ERROR
 
 
 def test_running_job_exception() -> None:
@@ -74,7 +74,7 @@ def test_running_job_exception() -> None:
     }
     jc = JobConfig.model_validate(job_config)
 
-    assert run_job(jc, fake_submission, submit_fn=lambda *args: None) == Status.ERROR
+    assert run_job(jc, variables={}, submit_fn=fake_submission) == Status.ERROR
 
 
 def test_no_function_error() -> None:

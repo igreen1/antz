@@ -2,8 +2,8 @@
 
 from typing import Callable, Dict
 
-from antz.infrastructure.config.base import PipelineConfig, Config, PrimitiveType
-from antz.infrastructure.core.job import run_job
+from antz.infrastructure.config.base import PipelineConfig, Config, PrimitiveType, MutableJobConfig
+from antz.infrastructure.core.job import run_job, run_mutable_job
 from antz.infrastructure.core.status import Status, is_final
 
 
@@ -25,23 +25,34 @@ def run_pipeline(
 
     if config.curr_state < len(config.stages):
 
+        # run the job
         curr_job = config.stages[config.curr_state]
         if isinstance(curr_job, PipelineConfig):
-            ret = run_pipeline(
+            ret_status = run_pipeline(
                 curr_job, variables=variables, submit_fn=submit_fn
             )  # allows pipelines of pipelines
+        elif isinstance(curr_job, MutableJobConfig): 
+            # allow the job access to the whole scope
+            ret_status, config, variables = run_mutable_job(
+                curr_job,
+                variables=variables,
+                submit_fn=submit_fn,
+                pipeline_config=config
+            )
         else:
-            ret = run_job(curr_job, variables=variables, submit_fn=submit_fn)
-        if ret == Status.ERROR:
+            ret_status = run_job(curr_job, variables=variables, submit_fn=submit_fn)
+
+        # handle pipeline cleanup/termination
+        if ret_status == Status.ERROR:
             restart(
                 config, variables=variables, submit_fn=submit_fn
             )  # optionally restart if setup for that
-        elif not is_final(ret):
+        elif not is_final(ret_status):
             # error! shouldn't happen
             return Status.ERROR
         else:
             success(config, variables=variables, submit_fn=submit_fn)
-        return ret
+        return ret_status
 
     return Status.ERROR
 
