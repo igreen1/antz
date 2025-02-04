@@ -21,6 +21,7 @@ def error_function(*args):
 def fake_submission(c: Config) -> None:
     pass
 
+
 def test_getting_functions() -> None:
 
     job_config: dict = {
