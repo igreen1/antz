@@ -14,6 +14,15 @@ VARIABLE_PATTERN = re.compile(r"%{([^}]+)}")
 def resolve_variables(
     parameters: ParametersType, variables: ParametersType
 ) -> ParametersType:
+    """Provided paramters, return the parameters with any variables interpolated
+
+    Args:
+        parameters (ParametersType): parameters to a job
+        variables (ParametersType): variables in scope for that job
+
+    Returns:
+        ParametersType: parameters of the job with variables interpolated
+    """
     if parameters is None:
         return None
     if variables is None:
@@ -211,9 +220,3 @@ def _resolve_token(var_token: str, variables: ParametersType) -> PrimitiveType:
     if variables is None:
         return token
     return str(variables.get(token, token))
-
-    """
-    support +, *, /, -
-    %{1 + 2} => 3
-    %{1  }
-    """

@@ -5,12 +5,12 @@ import queue
 import threading
 from typing import Callable
 
-from antz.infrastructure.config.base import PipelineConfig
+from antz.infrastructure.config.base import Config
 from antz.infrastructure.config.local_submitter import LocalSubmitterConfig
-from antz.infrastructure.core.pipeline import run_pipeline
+from antz.infrastructure.core.manager import run_manager
 
 
-def run_submitter(config: LocalSubmitterConfig) -> Callable[[PipelineConfig], None]:
+def run_submitter(config: LocalSubmitterConfig) -> Callable[[Config], None]:
     """Start the local submitter to accept jobs
 
     Args:
@@ -27,7 +27,7 @@ def run_submitter(config: LocalSubmitterConfig) -> Callable[[PipelineConfig], No
         task_queue=unified_task_queue, number_procs=config.num_concurrent_jobs
     ).start()
 
-    def submit_pipeline(config: PipelineConfig) -> None:
+    def submit_pipeline(config: Config) -> None:
         """Closure for the unified task queue"""
         return unified_task_queue.put(config)
 
@@ -96,7 +96,7 @@ class LocalProc(mp.Process):
     def run(self):
         """Infinitely loop waiting for a new job on the queue until the set_dead(True)"""
 
-        def submit_jobs(config: PipelineConfig) -> None:
+        def submit_fn(config: Config) -> None:
             """Submit a pipeline to this submitter"""
             self._queue.put(config)
 
@@ -106,7 +106,7 @@ class LocalProc(mp.Process):
                 with self._is_executing.lock():
                     self._is_executing.value = True
                 try:
-                    run_pipeline(next_config, submit_jobs)
+                    run_manager(next_config, submit_fn=submit_fn)
                 except Exception as _exc:  # pylint: disable=broad-exception-caught
                     pass
 

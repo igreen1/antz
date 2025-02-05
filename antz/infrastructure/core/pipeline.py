@@ -74,7 +74,7 @@ def success(
         next_pipeline_config = PipelineConfig.model_validate(next_config)
         submit_fn(
             Config.model_validate(
-                dict(variables=variables, config=next_pipeline_config)
+                {"variables": variables, "config": next_pipeline_config}
             )
         )
 

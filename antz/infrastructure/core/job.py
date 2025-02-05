@@ -58,8 +58,8 @@ def run_mutable_job(
         pipeline_config (PipelineConfig): configuration of the parent pipeline
 
     Returns:
-        tuple[Status, PipelineConfig, Dict[str, PrimitiveType]]: new configuration of parent pipeline
-            and the new variables to use
+        tuple[Status, PipelineConfig, Dict[str, PrimitiveType]]: 
+            new configuration of parent pipeline and the new variables to use
     """
     status: Status = Status.STARTING
     func_handle = config.function

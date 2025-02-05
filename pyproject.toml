@@ -23,4 +23,4 @@ packages = ["antz"]
 skip-excluded-dirs = true
 
 [tool.pylint]
-ignore-patterns = ["tests/*"]
+ignore = "test"
