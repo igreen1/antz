@@ -1,0 +1,26 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "antz"
+description = "A library to run your simple analysis pipelines"
+requires-python = ">=3.10"
+authors = [
+    {name = "Ian Green", email = "antz@iangreen.dev"}
+]
+readme = "README.md"
+license = "MIT"
+version = "0.0.1"
+dependencies = [
+    "pydantic"
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["antz"]
+
+[tool.hatch.build]
+skip-excluded-dirs = true
+
+[tool.pylint]
+ignore-patterns = ["tests/*"]
