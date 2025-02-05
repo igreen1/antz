@@ -20,7 +20,7 @@ jobs:
         pip install pylint pydantic black
     - name: Analysing the code with pylint
       run: |
-        pylint --ignore=test $(git ls-files '*.py')
+        pylint .
     - name: Checking the format with black
       run: |
         black --check antz
