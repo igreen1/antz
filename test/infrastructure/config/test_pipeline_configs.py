@@ -5,6 +5,7 @@ from antz.infrastructure.core.status import Status
 
 
 def fake_job_task(parameters, *args) -> Status:
+    """Return success only if arg1 is passed as 1"""
     if parameters["arg1"] == 1:
         return Status.SUCCESS
     return Status.ERROR
@@ -24,7 +25,7 @@ def test_create_pipeline_config() -> None:
 
 
 def test_pipeline_with_job_config() -> None:
-
+    """Test a pipeline with a job inside it"""
     pipeline_config = {
         "type": "pipeline",
         "name": "my pipeline",
@@ -44,6 +45,7 @@ def test_pipeline_with_job_config() -> None:
 
 
 def test_nested_pipeline() -> None:
+    """Test a pipeline config with apipeline inside of it"""
 
     pipeline_config = {
         "type": "pipeline",

@@ -1,3 +1,4 @@
+"""Test that job configs can be made and checked"""
 import json
 import uuid
 
@@ -8,11 +9,13 @@ from antz.infrastructure.config.base import JobConfig
 from antz.infrastructure.core.status import Status
 
 
-def fake_function(*args) -> Status:
+def fake_function(*_args) -> Status:
+    """A simple fake function for testing"""
     return Status.ERROR
 
 
 def test_job_import() -> None:
+    """Test that the configuration imports the function"""
 
     job_config = {
         "type": "job",
@@ -26,6 +29,7 @@ def test_job_import() -> None:
 
 
 def test_failed_to_find_job() -> None:
+    """Test that a validation error is thrown when the function isn't found"""
     job_config = {
         "type": "job",
         "name": "my job",
@@ -38,6 +42,7 @@ def test_failed_to_find_job() -> None:
 
 
 def test_not_a_callable() -> None:
+    """Test that a validation report is thrown when the function is not a callable"""
     job_config = {
         "type": "job",
         "name": "my job",
@@ -50,6 +55,7 @@ def test_not_a_callable() -> None:
 
 
 def test_no_such_module() -> None:
+    """Test that a validation error is thrown when the module of the function doesn't exist"""
     job_config = {
         "type": "job",
         "name": "my job",
@@ -62,6 +68,7 @@ def test_no_such_module() -> None:
 
 
 def test_job_uuid_creation() -> None:
+    """Test that all jobs are given UUIDs"""
 
     job_config = {
         "type": "job",
@@ -81,6 +88,7 @@ def test_job_uuid_creation() -> None:
 
 
 def test_job_uuid_override() -> None:
+    """Test that a configuration can override the UUID"""
 
     job_config = {
         "type": "job",
@@ -97,6 +105,8 @@ def test_job_uuid_override() -> None:
 
 
 def test_empty_job_parameters() -> None:
+    """Test that a validation error is thrown if a parameter is not provided 
+    (Empty dict is allowed but not None to increase explicit-ness)"""
 
     job_config = {
         "type": "job",
@@ -116,6 +126,7 @@ def test_empty_job_parameters() -> None:
 
 
 def test_job_frozen_attr() -> None:
+    """Test that attributes can't be edited on frozen classes"""
 
     job_config = {
         "type": "job",
