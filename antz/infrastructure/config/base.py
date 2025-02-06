@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import importlib
 import uuid
-from typing import Any, Callable, Dict, Literal, TypeAlias
+from typing import Any, Callable, Literal, Mapping, TypeAlias
 
 from pydantic import BaseModel, BeforeValidator, Field
 from typing_extensions import Annotated
@@ -14,12 +14,12 @@ from typing_extensions import Annotated
 from antz.infrastructure.core.status import Status
 
 PrimitiveType: TypeAlias = str | int | float | bool
-ParametersType: TypeAlias = Dict[str, PrimitiveType] | None
+ParametersType: TypeAlias = Mapping[str, PrimitiveType] | None
 SubmitFunctionType: TypeAlias = Callable[["Config"], None]
 JobFunctionType: TypeAlias = Callable[[ParametersType, SubmitFunctionType], Status]
 MutableJobFunctionType: TypeAlias = Callable[
-    [ParametersType, SubmitFunctionType, Dict[str, PrimitiveType], "PipelineConfig"],
-    tuple[Status, "PipelineConfig", Dict[str, PrimitiveType]],
+    [ParametersType, SubmitFunctionType, Mapping[str, PrimitiveType], "PipelineConfig"],
+    tuple[Status, "PipelineConfig", Mapping[str, PrimitiveType]],
 ]
 
 
@@ -99,6 +99,6 @@ class PipelineConfig(BaseModel, frozen=True):
 class Config(BaseModel, frozen=True):
     """The global configuration to submit to runner"""
 
-    variables: dict[str, PrimitiveType]
+    variables: Mapping[str, PrimitiveType]
     config: PipelineConfig
     # config: PipelineConfig | JobConfig = Field(discriminator='type')

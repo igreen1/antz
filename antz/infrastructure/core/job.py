@@ -3,7 +3,7 @@
 Each job performs one user-assigned task and returns its state.
 """
 
-from typing import Callable, Dict
+from typing import Callable, Mapping
 
 from antz.infrastructure.config.base import (
     Config,
@@ -18,7 +18,7 @@ from antz.infrastructure.core.variables import resolve_variables
 
 def run_job(
     config: JobConfig,
-    variables: Dict[str, PrimitiveType],
+    variables: Mapping[str, PrimitiveType],
     submit_fn: Callable[[Config], None],
 ) -> Status:
     """Run a job, which is the smallest atomic task of antz"""
@@ -42,10 +42,10 @@ def run_job(
 
 def run_mutable_job(
     config: MutableJobConfig,
-    variables: Dict[str, PrimitiveType],
+    variables: Mapping[str, PrimitiveType],
     submit_fn: Callable[[Config], None],
     pipeline_config: PipelineConfig,
-) -> tuple[Status, PipelineConfig, Dict[str, PrimitiveType]]:
+) -> tuple[Status, PipelineConfig, Mapping[str, PrimitiveType]]:
     """Like a job, but it will return a new pipeline and variables context
 
     Can be used to branch the pipeline (conditionals), update the scope,
@@ -53,12 +53,12 @@ def run_mutable_job(
 
     Args:
         config (MutableJobConfig): configuration of the function to run
-        variables (Dict[str, PrimitiveType]): variables in scope for this job
+        variables (Mapping[str, PrimitiveType]): variables in scope for this job
         submit_fn (Callable[[Config], None]): function to submit new jobs onto the runner system
         pipeline_config (PipelineConfig): configuration of the parent pipeline
 
     Returns:
-        tuple[Status, PipelineConfig, Dict[str, PrimitiveType]]:
+        tuple[Status, PipelineConfig, Mapping[str, PrimitiveType]]:
             new configuration of parent pipeline and the new variables to use
     """
     status: Status = Status.STARTING

@@ -1,6 +1,6 @@
 """A pipeline is a set of tasks to perform in series"""
 
-from typing import Callable, Dict
+from typing import Callable, Mapping
 
 from antz.infrastructure.config.base import (
     Config,
@@ -14,7 +14,7 @@ from antz.infrastructure.core.status import Status, is_final
 
 def run_pipeline(
     config: PipelineConfig,
-    variables: Dict[str, PrimitiveType],
+    variables: Mapping[str, PrimitiveType],
     submit_fn: Callable[[Config], None],
 ) -> Status:
     """Run the provided pipeline
@@ -63,7 +63,7 @@ def run_pipeline(
 
 def success(
     config: PipelineConfig,
-    variables: Dict[str, PrimitiveType],
+    variables: Mapping[str, PrimitiveType],
     submit_fn: Callable[[Config], None],
 ) -> None:
     """Resubmit this pipeline setup for the next job after a success"""
@@ -81,7 +81,7 @@ def success(
 
 def restart(
     config: PipelineConfig,
-    variables: Dict[str, PrimitiveType],
+    variables: Mapping[str, PrimitiveType],
     submit_fn: Callable[[Config], None],
 ) -> None:
     """Restart the config provided by updating and submit to submitter"""

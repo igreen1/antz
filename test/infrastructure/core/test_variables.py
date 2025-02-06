@@ -1,5 +1,5 @@
 """Test variable resolution module"""
-
+from typing import Mapping
 from antz.infrastructure.config.base import PrimitiveType
 from antz.infrastructure.core.variables import (VARIABLE_PATTERN,
                                                 _resolve_value,
@@ -28,7 +28,7 @@ def test_regex_pattern() -> None:
 def test_simple_variable_replacement() -> None:
     """Test a simploe replacement of a variable string"""
 
-    variables: dict[str, PrimitiveType] = {
+    variables: Mapping[str, PrimitiveType] = {
         "a": 1,
         "b": 2,
         "c": "hello",
@@ -61,7 +61,7 @@ def test_simple_variable_replacement() -> None:
 
 def test_parameters_simple_replacement() -> None:
     """test a simple interpolation of the variables into parameters"""
-    variables: dict[str, PrimitiveType] = {
+    variables: Mapping[str, PrimitiveType] = {
         "a": 1,
         "b": 2,
         "c": "hello",
@@ -102,7 +102,7 @@ def test_parameters_simple_replacement() -> None:
 def test_parameter_variable_expressions() -> None:
     """Test that expressions are allowed in variables (basic math)"""
 
-    variables: dict[str, PrimitiveType] = {
+    variables: Mapping[str, PrimitiveType] = {
         "a": 1,
         "b": 2,
         "bb": 12,
