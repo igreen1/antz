@@ -1,9 +1,14 @@
 import pytest
 from pydantic import ValidationError
+import logging
 
 from antz.infrastructure.config.base import Config, JobConfig
 from antz.infrastructure.core.job import run_job
 from antz.infrastructure.core.status import Status
+
+
+logger = logging.getLogger("test")
+logger.setLevel(100000)
 
 
 def successful_function(*args):
@@ -58,7 +63,10 @@ def test_running_job_success() -> None:
     }
     jc = JobConfig.model_validate(job_config)
 
-    assert run_job(jc, variables={}, submit_fn=fake_submission) == Status.SUCCESS
+    assert (
+        run_job(jc, variables={}, submit_fn=fake_submission, logger=logger)
+        == Status.SUCCESS
+    )
 
 
 def test_running_job_failure() -> None:
@@ -70,7 +78,10 @@ def test_running_job_failure() -> None:
     }
     jc = JobConfig.model_validate(job_config)
 
-    assert run_job(jc, variables={}, submit_fn=fake_submission) == Status.ERROR
+    assert (
+        run_job(jc, variables={}, submit_fn=fake_submission, logger=logger)
+        == Status.ERROR
+    )
 
 
 def test_running_job_exception() -> None:
@@ -82,7 +93,10 @@ def test_running_job_exception() -> None:
     }
     jc = JobConfig.model_validate(job_config)
 
-    assert run_job(jc, variables={}, submit_fn=fake_submission) == Status.ERROR
+    assert (
+        run_job(jc, variables={}, submit_fn=fake_submission, logger=logger)
+        == Status.ERROR
+    )
 
 
 def test_no_function_error() -> None:

@@ -21,9 +21,7 @@ def run(config: Mapping[str, Any]) -> None:
     validated_config = InitialConfig.model_validate(config)
 
     if validated_config.submitter_config.type == "local":
-        thread_handle = run_local_submitter(
-            validated_config.submitter_config, validated_config.analysis_config
-        )
+        thread_handle = run_local_submitter(validated_config)
         thread_handle.join()  # wait for child threads to finish
     else:
         raise RuntimeError("Unknown submitter type")

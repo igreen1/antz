@@ -1,13 +1,10 @@
 """A pipeline is a set of tasks to perform in series"""
 
+import logging
 from typing import Callable, Mapping
 
-from antz.infrastructure.config.base import (
-    Config,
-    MutableJobConfig,
-    PipelineConfig,
-    PrimitiveType,
-)
+from antz.infrastructure.config.base import (Config, MutableJobConfig,
+                                             PipelineConfig, PrimitiveType)
 from antz.infrastructure.core.job import run_job, run_mutable_job
 from antz.infrastructure.core.status import Status, is_final
 
@@ -16,6 +13,7 @@ def run_pipeline(
     config: PipelineConfig,
     variables: Mapping[str, PrimitiveType],
     submit_fn: Callable[[Config], None],
+    logger: logging.Logger,
 ) -> Status:
     """Run the provided pipeline
 
@@ -33,7 +31,7 @@ def run_pipeline(
         curr_job = config.stages[config.curr_stage]
         if isinstance(curr_job, PipelineConfig):
             ret_status = run_pipeline(
-                curr_job, variables=variables, submit_fn=submit_fn
+                curr_job, variables=variables, submit_fn=submit_fn, logger=logger
             )  # allows pipelines of pipelines
         elif isinstance(curr_job, MutableJobConfig):
             # allow the job access to the whole scope
@@ -42,9 +40,12 @@ def run_pipeline(
                 variables=variables,
                 submit_fn=submit_fn,
                 pipeline_config=config,
+                logger=logger,
             )
         else:
-            ret_status = run_job(curr_job, variables=variables, submit_fn=submit_fn)
+            ret_status = run_job(
+                curr_job, variables=variables, submit_fn=submit_fn, logger=logger
+            )
 
         # handle pipeline cleanup/termination
         if ret_status == Status.ERROR:

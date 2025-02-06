@@ -3,15 +3,12 @@
 Each job performs one user-assigned task and returns its state.
 """
 
+import logging
 from typing import Callable, Mapping
 
-from antz.infrastructure.config.base import (
-    Config,
-    JobConfig,
-    MutableJobConfig,
-    PipelineConfig,
-    PrimitiveType,
-)
+from antz.infrastructure.config.base import (Config, JobConfig,
+                                             MutableJobConfig, PipelineConfig,
+                                             PrimitiveType)
 from antz.infrastructure.core.status import Status
 from antz.infrastructure.core.variables import resolve_variables
 
@@ -20,6 +17,7 @@ def run_job(
     config: JobConfig,
     variables: Mapping[str, PrimitiveType],
     submit_fn: Callable[[Config], None],
+    logger: logging.Logger,
 ) -> Status:
     """Run a job, which is the smallest atomic task of antz"""
     status: Status = Status.STARTING
@@ -44,6 +42,7 @@ def run_mutable_job(
     variables: Mapping[str, PrimitiveType],
     submit_fn: Callable[[Config], None],
     pipeline_config: PipelineConfig,
+    logger: logging.Logger,
 ) -> tuple[Status, PipelineConfig, Mapping[str, PrimitiveType]]:
     """Like a job, but it will return a new pipeline and variables context
 

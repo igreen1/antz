@@ -2,11 +2,19 @@
 
 import queue
 from typing import Any
+import logging
 
-from antz.infrastructure.config.base import (Config, MutableJobConfig,
-                                             PipelineConfig, Status)
+from antz.infrastructure.config.base import (
+    Config,
+   PipelineConfig,
+    Status,
+)
 from antz.infrastructure.core.manager import run_manager
 from antz.infrastructure.core.pipeline import run_pipeline
+
+
+logger = logging.getLogger("test")
+logger.setLevel(100000) # don't log in tests
 
 
 def test_multiple_restarts_pipeline() -> None:
@@ -29,19 +37,19 @@ def test_multiple_restarts_pipeline() -> None:
     config_dict = {"config": pipeline_config, "variables": {}}
     config = Config.model_validate(config_dict)
 
-    run_manager(config, submit_fn)
+    run_manager(config, submit_fn, logger=logger)
     assert test_queue.qsize() == 1
     ret = test_queue.get()
     assert ret.config.curr_restarts == 1
     assert ret.config.curr_stage == 0
 
-    run_manager(ret, submit_fn)
+    run_manager(ret, submit_fn, logger=logger)
     assert test_queue.qsize() == 1
     ret = test_queue.get()
     assert ret.config.curr_restarts == 2
     assert ret.config.curr_stage == 0
 
-    run_manager(ret, submit_fn)
+    run_manager(ret, submit_fn, logger=logger)
     assert test_queue.qsize() == 0
 
 
@@ -65,7 +73,7 @@ def test_restarting_pipeline() -> None:
     }
 
     pc = PipelineConfig.model_validate(pipeline_config)
-    status = run_pipeline(pc, variables={}, submit_fn=submit_fn)
+    status = run_pipeline(pc, variables={}, submit_fn=submit_fn, logger=logger)
     assert status == Status.ERROR
     assert test_queue.qsize() > 0
     ret = test_queue.get()
@@ -86,7 +94,7 @@ def test_running_successful_pipeline() -> None:
     pipeline_config = {"type": "pipeline", "stages": [job_config]}
 
     pc = PipelineConfig.model_validate(pipeline_config)
-    status = run_pipeline(pc, variables={}, submit_fn=submit_fn)
+    status = run_pipeline(pc, variables={}, submit_fn=submit_fn, logger=logger)
     assert status == Status.SUCCESS
     assert test_queue.qsize() == 0
 
@@ -105,7 +113,7 @@ def test_running_failed_pipeline() -> None:
     pipeline_config = {"type": "pipeline", "stages": [job_config]}
 
     pc = PipelineConfig.model_validate(pipeline_config)
-    status = run_pipeline(pc, variables={}, submit_fn=submit_fn)
+    status = run_pipeline(pc, variables={}, submit_fn=submit_fn, logger=logger)
     assert status == Status.ERROR
     assert test_queue.qsize() == 0
 
@@ -125,7 +133,7 @@ def test_running_error_pipeline() -> None:
     pipeline_config = {"type": "pipeline", "stages": [job_config]}
 
     pc = PipelineConfig.model_validate(pipeline_config)
-    status = run_pipeline(pc, variables={}, submit_fn=submit_fn)
+    status = run_pipeline(pc, variables={}, submit_fn=submit_fn, logger=logger)
     assert status == Status.ERROR
     assert test_queue.qsize() == 0
 

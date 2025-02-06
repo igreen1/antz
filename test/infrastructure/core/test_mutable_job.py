@@ -2,11 +2,19 @@
 
 import queue
 from typing import Any
+import logging
 
-from antz.infrastructure.config.base import (Config, MutableJobConfig,
-                                             PipelineConfig, Status)
+from antz.infrastructure.config.base import (
+    Config,
+    MutableJobConfig,
+    PipelineConfig,
+    Status,
+)
 from antz.infrastructure.core.job import run_mutable_job
 from antz.infrastructure.core.pipeline import run_pipeline
+
+logger = logging.getLogger("test")
+logger.setLevel(100000)
 
 
 def test_mutating_pipeline_and_variables_in_pipeline() -> None:
@@ -30,7 +38,10 @@ def test_mutating_pipeline_and_variables_in_pipeline() -> None:
     start_pipeline_config = PipelineConfig.model_validate(pipeline_config)
     assert (
         run_pipeline(
-            config=start_pipeline_config, variables={"a": 1}, submit_fn=submit_fn
+            config=start_pipeline_config,
+            variables={"a": 1},
+            submit_fn=submit_fn,
+            logger=logger,
         )
         == Status.SUCCESS
     )
@@ -58,6 +69,7 @@ def test_mutating_variables_job() -> None:
         variables={"a": 1},
         submit_fn=lambda *args: None,
         pipeline_config=pc,
+        logger=logger,
     )
     assert status == Status.SUCCESS
     assert ret_pipeline_config == pc
@@ -78,6 +90,7 @@ def test_mutable_success_job() -> None:
         variables={},
         submit_fn=lambda *args: None,
         pipeline_config=pc,
+        logger=logger,
     )
     assert status == Status.SUCCESS
     assert ret_pipeline_config == pc
@@ -99,6 +112,7 @@ def test_mutable_failure_job() -> None:
         variables={},
         submit_fn=lambda *args: None,
         pipeline_config=pc,
+        logger=logger,
     )
     assert status == Status.ERROR
     assert ret_pipeline_config == pc
@@ -120,6 +134,7 @@ def test_mutable_exception_job() -> None:
         variables={},
         submit_fn=lambda *args: None,
         pipeline_config=pc,
+        logger=logger,
     )
     assert status == Status.ERROR
     assert ret_pipeline_config == pc

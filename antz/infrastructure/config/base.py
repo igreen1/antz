@@ -5,6 +5,7 @@ This is the base level of the configuration for the core components
 from __future__ import annotations
 
 import importlib
+import logging
 import uuid
 from typing import Any, Callable, Literal, Mapping, TypeAlias
 
@@ -112,12 +113,21 @@ class PipelineConfig(BaseModel, frozen=True):
     stages: list[JobConfig | PipelineConfig | MutableJobConfig]
 
 
+class LoggingConfig(BaseModel, frozen=True):
+    """The configuration of logging"""
+
+    type: Literal["off", "file", "console", "remote"] = (
+        "console"  # default to logging to screen
+    )
+    level: int = logging.CRITICAL  # default to only logging on crashes
+    directory: str | None = './log'
+
+
 class Config(BaseModel, frozen=True):
     """The global configuration to submit to runner"""
 
     variables: Mapping[str, PrimitiveType]
     config: PipelineConfig
-    # config: PipelineConfig | JobConfig = Field(discriminator='type')
 
 
 class InitialConfig(BaseModel, frozen=True):
@@ -125,3 +135,4 @@ class InitialConfig(BaseModel, frozen=True):
 
     analysis_config: Config
     submitter_config: LocalSubmitterConfig = Field(discriminator="type")
+    logging_config: LoggingConfig = LoggingConfig()
