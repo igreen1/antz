@@ -1,5 +1,7 @@
 """Test variable resolution module"""
+
 from typing import Mapping
+
 from antz.infrastructure.config.base import PrimitiveType
 from antz.infrastructure.core.variables import (VARIABLE_PATTERN,
                                                 _resolve_value,

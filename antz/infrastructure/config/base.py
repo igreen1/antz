@@ -8,7 +8,7 @@ import importlib
 import uuid
 from typing import Any, Callable, Literal, Mapping, TypeAlias
 
-from pydantic import BaseModel, BeforeValidator, Field
+from pydantic import BaseModel, BeforeValidator, Field, field_serializer
 from typing_extensions import Annotated
 
 from antz.infrastructure.core.status import Status
@@ -71,6 +71,10 @@ class JobConfig(BaseModel, frozen=True):
     function: Annotated[JobFunctionType, BeforeValidator(_get_job_func)]
     parameters: ParametersType
 
+    @field_serializer("function")
+    def serialize_function(self, func: MutableJobFunctionType, _info):
+        return func.__module__ + "." + func.__name__
+
 
 class MutableJobConfig(BaseModel, frozen=True):
     """A normal job but it can edit its parents configurations
@@ -83,13 +87,17 @@ class MutableJobConfig(BaseModel, frozen=True):
     function: Annotated[MutableJobFunctionType, BeforeValidator(_get_job_func)]
     parameters: ParametersType
 
+    @field_serializer("function")
+    def serialize_function(self, func: MutableJobFunctionType, _info):
+        return func.__module__ + "." + func.__name__
+
 
 class PipelineConfig(BaseModel, frozen=True):
     """Configuration of a pipeline, which is a series of jobs or sub-pipelines"""
 
     type: Literal["pipeline"]
     name: str = "pipeline"
-    curr_state: int = 0
+    curr_stage: int = 0
     status: int = Status.READY
     max_allowed_restarts: int = 0
     curr_restarts: int = 0

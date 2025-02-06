@@ -1,4 +1,5 @@
 """Test that job configs can be made and checked"""
+
 import json
 import uuid
 
@@ -105,7 +106,7 @@ def test_job_uuid_override() -> None:
 
 
 def test_empty_job_parameters() -> None:
-    """Test that a validation error is thrown if a parameter is not provided 
+    """Test that a validation error is thrown if a parameter is not provided
     (Empty dict is allowed but not None to increase explicit-ness)"""
 
     job_config = {

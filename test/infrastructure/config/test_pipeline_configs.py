@@ -17,7 +17,7 @@ def test_create_pipeline_config() -> None:
     pipeline_config = {"type": "pipeline", "name": "my pipeline", "stages": []}
     p1 = PipelineConfig.model_validate(pipeline_config)
 
-    assert p1.curr_state == 0
+    assert p1.curr_stage == 0
     assert p1.status == Status.READY
     assert p1.max_allowed_restarts == 0
     assert p1.curr_restarts == 0
