@@ -17,7 +17,7 @@ class CopyParameters(BaseModel, frozen=True):
     infer_name: bool = False
 
 
-def copy(parameters: ParametersType) -> Status:
+def copy(parameters: ParametersType, *_, **__) -> Status:
     """Copy file or directory from parameters.soruce to parameters.destination
 
     Parameters {

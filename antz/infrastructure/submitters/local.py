@@ -3,14 +3,16 @@
 import multiprocessing as mp
 import queue
 import threading
-from typing import Callable
+import time
 
 from antz.infrastructure.config.base import Config
 from antz.infrastructure.config.local_submitter import LocalSubmitterConfig
 from antz.infrastructure.core.manager import run_manager
 
 
-def run_submitter(config: LocalSubmitterConfig) -> Callable[[Config], None]:
+def run_local_submitter(
+    config: LocalSubmitterConfig, start_job: Config
+) -> threading.Thread:
     """Start the local submitter to accept jobs
 
     Args:
@@ -20,18 +22,24 @@ def run_submitter(config: LocalSubmitterConfig) -> Callable[[Config], None]:
         Callable[[PipelineConfig], None]: callable that accepts a pipeline config
             and places it on the queue
     """
+    mp.set_start_method(
+        "spawn"
+    )  # we have significant threading, so complete isolation is required
 
     unified_task_queue: mp.Queue = mp.Queue()
 
-    LocalProcManager(
+    proc_ = LocalProcManager(
         task_queue=unified_task_queue, number_procs=config.num_concurrent_jobs
-    ).start()
+    )
 
     def submit_pipeline(config: Config) -> None:
         """Closure for the unified task queue"""
         return unified_task_queue.put(config)
 
-    return submit_pipeline
+    submit_pipeline(start_job)
+    proc_.start()
+
+    return proc_
 
 
 class LocalProcManager(threading.Thread):
@@ -53,6 +61,9 @@ class LocalProcManager(threading.Thread):
 
         children = [LocalProc(self.task_queue)]
 
+        for child in children:
+            child.start()
+
         while True:
             if self.task_queue.qsize() == 0 and all(
                 not child.get_is_executing() for child in children
@@ -60,6 +71,7 @@ class LocalProcManager(threading.Thread):
                 for child in children:
                     child.set_dead(True)
                 break
+            time.sleep(1)  # only check every second
 
         for child in children:
             child.join()
@@ -103,14 +115,17 @@ class LocalProc(mp.Process):
         while not self._is_dead.value:
             try:
                 next_config = self._queue.get(timeout=1)
-                with self._is_executing.lock():
+                with self._is_executing.get_lock():
                     self._is_executing.value = True
                 try:
                     run_manager(next_config, submit_fn=submit_fn)
                 except Exception as _exc:  # pylint: disable=broad-exception-caught
                     pass
 
-                with self._is_executing.lock():
+                with self._is_executing.get_lock():
                     self._is_executing.value = False
             except queue.Empty as _e:
                 pass  # just waiting for another job
+            time.sleep(0.5)  # only check every 1/2 second to reduce resource usage
+        with self._is_executing.get_lock():
+            self._is_executing = False

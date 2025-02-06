@@ -2,8 +2,12 @@
 
 from typing import Callable, Mapping
 
-from antz.infrastructure.config.base import (Config, MutableJobConfig,
-                                             PipelineConfig, PrimitiveType)
+from antz.infrastructure.config.base import (
+    Config,
+    MutableJobConfig,
+    PipelineConfig,
+    PrimitiveType,
+)
 from antz.infrastructure.core.job import run_job, run_mutable_job
 from antz.infrastructure.core.status import Status, is_final
 
@@ -39,7 +43,6 @@ def run_pipeline(
                 submit_fn=submit_fn,
                 pipeline_config=config,
             )
-            print(variables)
         else:
             ret_status = run_job(curr_job, variables=variables, submit_fn=submit_fn)
 

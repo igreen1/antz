@@ -13,6 +13,8 @@ from typing_extensions import Annotated
 
 from antz.infrastructure.core.status import Status
 
+from .local_submitter import LocalSubmitterConfig
+
 PrimitiveType: TypeAlias = str | int | float | bool
 ParametersType: TypeAlias = Mapping[str, PrimitiveType] | None
 SubmitFunctionType: TypeAlias = Callable[["Config"], None]
@@ -73,6 +75,9 @@ class JobConfig(BaseModel, frozen=True):
 
     @field_serializer("function")
     def serialize_function(self, func: MutableJobFunctionType, _info):
+        """To serialize function, store the import path to the func
+        instead of its handle as a str
+        """
         return func.__module__ + "." + func.__name__
 
 
@@ -89,6 +94,9 @@ class MutableJobConfig(BaseModel, frozen=True):
 
     @field_serializer("function")
     def serialize_function(self, func: MutableJobFunctionType, _info):
+        """To serialize function, store the import path to the func
+        instead of its handle as a str
+        """
         return func.__module__ + "." + func.__name__
 
 
@@ -110,3 +118,10 @@ class Config(BaseModel, frozen=True):
     variables: Mapping[str, PrimitiveType]
     config: PipelineConfig
     # config: PipelineConfig | JobConfig = Field(discriminator='type')
+
+
+class InitialConfig(BaseModel, frozen=True):
+    """The configuration of both the jobs and the submitters"""
+
+    analysis_config: Config
+    submitter_config: LocalSubmitterConfig = Field(discriminator="type")
