@@ -1,11 +1,11 @@
+import logging
+
 import pytest
 from pydantic import ValidationError
-import logging
 
 from antz.infrastructure.config.base import Config, JobConfig
 from antz.infrastructure.core.job import run_job
 from antz.infrastructure.core.status import Status
-
 
 logger = logging.getLogger("test")
 logger.setLevel(100000)

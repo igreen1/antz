@@ -1,8 +1,8 @@
 """Test jobs that can mutate the context"""
 
+import logging
 import queue
 from typing import Any
-import logging
 
 from antz.infrastructure.config.base import (
     Config,

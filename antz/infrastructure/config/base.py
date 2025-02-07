@@ -120,7 +120,7 @@ class LoggingConfig(BaseModel, frozen=True):
         "console"  # default to logging to screen
     )
     level: int = logging.CRITICAL  # default to only logging on crashes
-    directory: str | None = './log'
+    directory: str | None = "./log"
 
 
 class Config(BaseModel, frozen=True):

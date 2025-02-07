@@ -6,9 +6,13 @@ Each job performs one user-assigned task and returns its state.
 import logging
 from typing import Callable, Mapping
 
-from antz.infrastructure.config.base import (Config, JobConfig,
-                                             MutableJobConfig, PipelineConfig,
-                                             PrimitiveType)
+from antz.infrastructure.config.base import (
+    Config,
+    JobConfig,
+    MutableJobConfig,
+    PipelineConfig,
+    PrimitiveType,
+)
 from antz.infrastructure.core.status import Status
 from antz.infrastructure.core.variables import resolve_variables
 

@@ -8,7 +8,7 @@ params = {
 import os
 import shutil
 
-from pydantic import BeforeValidator, BaseModel
+from pydantic import BaseModel, BeforeValidator
 from typing_extensions import Annotated
 
 from antz.infrastructure.config.base import ParametersType

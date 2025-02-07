@@ -1,6 +1,7 @@
 """Test that the local submitter runner works"""
 
 import os
+
 import antz.run
 
 

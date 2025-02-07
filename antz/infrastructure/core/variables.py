@@ -47,12 +47,14 @@ def _resolve_value(val: PrimitiveType, variables: ParametersType) -> PrimitiveTy
 
     split_vars = VARIABLE_PATTERN.split(val)
     if len(split_vars) == 1:
-        return val # only unmatched will return a list of one
+        return val  # only unmatched will return a list of one
     for i in range(1, len(split_vars), 2):
-        split_vars[i] = str(_resolve_variable_expression(split_vars[i], variables=variables))
-    
-    val = ''.join(split_vars)
-    
+        split_vars[i] = str(
+            _resolve_variable_expression(split_vars[i], variables=variables)
+        )
+
+    val = "".join(split_vars)
+
     val = _infer_type(val)
 
     return val
@@ -121,7 +123,7 @@ def _resolve_variable_expression(
     Returns:
         PrimitiveType: the variable expression as simplified as possible
     """
-    print('parent call: ', variable_expression)
+    print("parent call: ", variable_expression)
     return _resolve_variable_expression_recursive(
         variable_expression=variable_expression.strip(), variables=variables
     )
@@ -156,7 +158,7 @@ def _resolve_variable_expression_recursive(
 
     # shortcut allows variables with +,-,/,*
     if variables is not None and variable_expression in variables:
-        return (variables[variable_expression])
+        return variables[variable_expression]
 
     operations = [
         ("-", sub),

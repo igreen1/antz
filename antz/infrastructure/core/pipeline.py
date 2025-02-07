@@ -3,8 +3,12 @@
 import logging
 from typing import Callable, Mapping
 
-from antz.infrastructure.config.base import (Config, MutableJobConfig,
-                                             PipelineConfig, PrimitiveType)
+from antz.infrastructure.config.base import (
+    Config,
+    MutableJobConfig,
+    PipelineConfig,
+    PrimitiveType,
+)
 from antz.infrastructure.core.job import run_job, run_mutable_job
 from antz.infrastructure.core.status import Status, is_final
 

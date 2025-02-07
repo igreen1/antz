@@ -1,20 +1,15 @@
 """Test running a pipelin"""
 
+import logging
 import queue
 from typing import Any
-import logging
 
-from antz.infrastructure.config.base import (
-    Config,
-   PipelineConfig,
-    Status,
-)
+from antz.infrastructure.config.base import Config, PipelineConfig, Status
 from antz.infrastructure.core.manager import run_manager
 from antz.infrastructure.core.pipeline import run_pipeline
 
-
 logger = logging.getLogger("test")
-logger.setLevel(100000) # don't log in tests
+logger.setLevel(100000)  # don't log in tests
 
 
 def test_multiple_restarts_pipeline() -> None:
