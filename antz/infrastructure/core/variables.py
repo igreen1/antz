@@ -5,6 +5,7 @@ Parameters may contain variables which need resolving. This module
 
 import re
 from operator import add, mul, sub, truediv
+from typing import Mapping, overload
 
 from antz.infrastructure.config.base import ParametersType, PrimitiveType
 
@@ -12,7 +13,7 @@ VARIABLE_PATTERN = re.compile(r"%{([^}]+)}")
 
 
 def resolve_variables(
-    parameters: ParametersType, variables: ParametersType
+    parameters: ParametersType, variables: Mapping[str, PrimitiveType]
 ) -> ParametersType:
     """Provided paramters, return the parameters with any variables interpolated
 
@@ -30,7 +31,23 @@ def resolve_variables(
     return {k: _resolve_value(val, variables) for k, val in parameters.items()}
 
 
-def _resolve_value(val: PrimitiveType, variables: ParametersType) -> PrimitiveType:
+@overload
+def _resolve_value(
+    val: PrimitiveType, variables: Mapping[str, PrimitiveType]
+) -> PrimitiveType:
+    pass
+
+
+@overload
+def _resolve_value(
+    val: list[PrimitiveType], variables: Mapping[str, PrimitiveType]
+) -> list[PrimitiveType]:
+    pass
+
+
+def _resolve_value(
+    val: PrimitiveType | list[PrimitiveType], variables: Mapping[str, PrimitiveType]
+) -> PrimitiveType | list[PrimitiveType]:
     """Given a value return the value with any variables resolved/removed
 
     Args:
@@ -41,6 +58,9 @@ def _resolve_value(val: PrimitiveType, variables: ParametersType) -> PrimitiveTy
         PrimitiveType: provided value with any variables tokens
             replaced with value of the variable
     """
+
+    if isinstance(val, list):
+        return [_resolve_value(elem, variables=variables) for elem in val]
 
     if not isinstance(val, str):
         return val  # only strings have variable tokens
@@ -98,7 +118,7 @@ def _infer_type(val: str) -> PrimitiveType:
 
 
 def _resolve_variable_expression(
-    variable_expression: str, variables: ParametersType
+    variable_expression: str, variables: Mapping[str, PrimitiveType]
 ) -> PrimitiveType:
     """Turn expressions of variables into one literal
 
@@ -130,7 +150,7 @@ def _resolve_variable_expression(
 
 
 def _resolve_variable_expression_recursive(
-    variable_expression: str, variables: ParametersType
+    variable_expression: str, variables: Mapping[str, PrimitiveType]
 ) -> PrimitiveType:
     """Turn expressions of variables into one literal
 

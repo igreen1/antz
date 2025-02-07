@@ -17,7 +17,7 @@ from antz.infrastructure.core.status import Status
 from .local_submitter import LocalSubmitterConfig
 
 PrimitiveType: TypeAlias = str | int | float | bool
-ParametersType: TypeAlias = Mapping[str, PrimitiveType] | None
+ParametersType: TypeAlias = Mapping[str, PrimitiveType | list[PrimitiveType]] | None
 SubmitFunctionType: TypeAlias = Callable[["Config"], None]
 JobFunctionType: TypeAlias = Callable[[ParametersType, SubmitFunctionType], Status]
 MutableJobFunctionType: TypeAlias = Callable[
