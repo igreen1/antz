@@ -1,6 +1,7 @@
 """Test variable resolution module"""
 
 from typing import Mapping
+import pytest
 
 from antz.infrastructure.config.base import PrimitiveType
 from antz.infrastructure.core.variables import (
@@ -28,70 +29,54 @@ def test_regex_pattern() -> None:
         match = [x.lstrip("%{").rstrip("}") for x in VARIABLE_PATTERN.findall(unparsed)]
         assert match == expected
 
+_variables: Mapping[str, PrimitiveType] = {
+        "a": 1,
+        "b": 2,
+        "bb": 12,
+        "c": "hello",
+        "d": 0.123,
+        "e": "true",
+        "f": True,
+        "g": False,
+        "h": "faLsE",
+    }
 
-def test_simple_variable_replacement() -> None:
+_expected = {
+    "hello%{b}": "hello2",
+    "%{a}": 1,
+    "%{b}bye": "2bye",
+    "abc%{c}def": "abchellodef",
+    "%{b}": 2,
+    "%{d}": 0.123,
+    "hello%{d}": "hello0.123",
+    "%{h}": False,
+    "%{g}": False,
+    "%{f}": True,
+    "%{e}": True,
+    "helo%{e}": "helotrue",
+    "a%{f}b": "aTrueb",
+    "a%{f}b%{d}": "aTrueb0.123",
+}
+
+@pytest.mark.parametrize(
+    "given,expected,variables",
+    [
+        (k, v, _variables) for k, v in _expected.items()
+    ]
+)
+def test_simple_variable_replacement(given, expected, variables) -> None:
     """Test a simploe replacement of a variable string"""
 
-    variables: Mapping[str, PrimitiveType] = {
-        "a": 1,
-        "b": 2,
-        "c": "hello",
-        "d": 0.123,
-        "e": "true",
-        "f": True,
-        "g": False,
-        "h": "faLsE",
-    }
-
-    expected_values = {
-        "%{a}": 1,
-        "hello%{b}": "hello2",
-        "%{b}bye": "2bye",
-        "abc%{c}def": "abchellodef",
-        "%{b}": 2,
-        "%{d}": 0.123,
-        "hello%{d}": "hello0.123",
-        "%{h}": False,
-        "%{g}": False,
-        "%{f}": True,
-        "%{e}": True,
-        "helo%{e}": "helotrue",
-        "a%{f}b": "aTrueb",
-    }
-
-    for input_val, expected_val in expected_values.items():
-        assert _resolve_value(input_val, variables=variables) == expected_val
-
-
+    assert _resolve_value(given, variables=variables) == expected
+    
 def test_parameters_simple_replacement() -> None:
     """test a simple interpolation of the variables into parameters"""
-    variables: Mapping[str, PrimitiveType] = {
-        "a": 1,
-        "b": 2,
-        "c": "hello",
-        "d": 0.123,
-        "e": "true",
-        "f": True,
-        "g": False,
-        "h": "faLsE",
-    }
+    variables = _variables
 
     expected_values = [
-        ("%{a}", 1),
-        ("hello%{b}", "hello2"),
-        ("%{b}bye", "2bye"),
-        ("abc%{c}def", "abchellodef"),
-        ("%{b}", 2),
-        ("%{d}", 0.123),
-        ("hello%{d}", "hello0.123"),
-        ("%{h}", False),
-        ("%{g}", False),
-        ("%{f}", True),
-        ("%{e}", True),
-        ("helo%{e}", "helotrue"),
-        ("a%{f}b", "aTrueb"),
+        (k, v) for k, v in _expected.items()
     ]
-
+    
     input_parameters = {
         str(i): in_val for i, (in_val, _expected_out) in enumerate(expected_values)
     }
@@ -106,17 +91,7 @@ def test_parameters_simple_replacement() -> None:
 def test_parameter_variable_expressions() -> None:
     """Test that expressions are allowed in variables (basic math)"""
 
-    variables: Mapping[str, PrimitiveType] = {
-        "a": 1,
-        "b": 2,
-        "bb": 12,
-        "c": "hello",
-        "d": 0.123,
-        "e": "true",
-        "f": True,
-        "g": False,
-        "h": "faLsE",
-    }
+    variables = _variables    
 
     expected_values = {
         ("%{a * b}", 2),

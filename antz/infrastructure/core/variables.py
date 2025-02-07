@@ -45,24 +45,15 @@ def _resolve_value(val: PrimitiveType, variables: ParametersType) -> PrimitiveTy
     if not isinstance(val, str):
         return val  # only strings have variable tokens
 
-    # don't do type conversions if nothing has changed
-    has_changed: bool = False
-
-    for match in VARIABLE_PATTERN.finditer(val):
-        has_changed = True
-        val = (
-            val[: match.start()]
-            + str(
-                _resolve_variable_expression(
-                    val[match.start() : match.end()], variables
-                )
-            )
-            + val[match.end() :]
-        )
-
-    if has_changed:
-        # the variable might now be another type, like a numeric
-        val = _infer_type(val)
+    split_vars = VARIABLE_PATTERN.split(val)
+    if len(split_vars) == 1:
+        return val # only unmatched will return a list of one
+    for i in range(1, len(split_vars), 2):
+        split_vars[i] = str(_resolve_variable_expression(split_vars[i], variables=variables))
+    
+    val = ''.join(split_vars)
+    
+    val = _infer_type(val)
 
     return val
 
@@ -130,8 +121,9 @@ def _resolve_variable_expression(
     Returns:
         PrimitiveType: the variable expression as simplified as possible
     """
+    print('parent call: ', variable_expression)
     return _resolve_variable_expression_recursive(
-        variable_expression=variable_expression.strip()[2:-1], variables=variables
+        variable_expression=variable_expression.strip(), variables=variables
     )
 
 
@@ -162,6 +154,10 @@ def _resolve_variable_expression_recursive(
         PrimitiveType: the variable expression as simplified as possible
     """
 
+    # shortcut allows variables with +,-,/,*
+    if variables is not None and variable_expression in variables:
+        return (variables[variable_expression])
+
     operations = [
         ("-", sub),
         ("+", add),
@@ -187,7 +183,7 @@ def _resolve_variable_expression_recursive(
                 lval = _infer_type(lval)
                 if not isinstance(lval, (int, float)):
                     raise RuntimeError(
-                        f'Unable to resolve perform multiplication with "{lval}"'
+                        f'Unable to resolve perform multiplication with "{lval}" and "{rval}"'
                     )
 
             if not isinstance(rval, (int, float)):

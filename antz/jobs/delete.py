@@ -8,7 +8,7 @@ params = {
 import os
 import shutil
 
-from pydantic import AfterValidator, BaseModel
+from pydantic import BeforeValidator, BaseModel
 from typing_extensions import Annotated
 
 from antz.infrastructure.config.base import ParametersType
@@ -18,7 +18,7 @@ from antz.infrastructure.core.status import Status
 class DeleteParameters(BaseModel, frozen=True):
     """The parameters required for the copy command"""
 
-    path: Annotated[str, AfterValidator(os.path.exists)]
+    path: Annotated[str, BeforeValidator(lambda x: x if os.path.exists(x) else None)]
 
 
 def delete(parameters: ParametersType, *_, **__) -> Status:
