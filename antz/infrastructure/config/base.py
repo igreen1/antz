@@ -20,10 +20,6 @@ PrimitiveType: TypeAlias = str | int | float | bool
 ParametersType: TypeAlias = Mapping[str, PrimitiveType | list[PrimitiveType]] | None
 SubmitFunctionType: TypeAlias = Callable[["Config"], None]
 JobFunctionType: TypeAlias = Callable[[ParametersType, SubmitFunctionType], Status]
-MutableJobFunctionType: TypeAlias = Callable[
-    [ParametersType, SubmitFunctionType, Mapping[str, PrimitiveType], "PipelineConfig"],
-    tuple[Status, "PipelineConfig", Mapping[str, PrimitiveType]],
-]
 
 
 def _get_job_func(func_name_or_any: Any) -> JobFunctionType | None:
@@ -75,26 +71,7 @@ class JobConfig(BaseModel, frozen=True):
     parameters: ParametersType
 
     @field_serializer("function")
-    def serialize_function(self, func: MutableJobFunctionType, _info):
-        """To serialize function, store the import path to the func
-        instead of its handle as a str
-        """
-        return func.__module__ + "." + func.__name__
-
-
-class MutableJobConfig(BaseModel, frozen=True):
-    """A normal job but it can edit its parents configurations
-    This can obviously create some issues, but also is useful in quite a few cases.
-    USE WITH CARE"""
-
-    type: Literal["mutable_job"]
-    name: str = "some job"
-    id: uuid.UUID = Field(default_factory=uuid.uuid4, validate_default=True)
-    function: Annotated[MutableJobFunctionType, BeforeValidator(_get_job_func)]
-    parameters: ParametersType
-
-    @field_serializer("function")
-    def serialize_function(self, func: MutableJobFunctionType, _info):
+    def serialize_function(self, func: JobFunctionType, _info):
         """To serialize function, store the import path to the func
         instead of its handle as a str
         """
@@ -110,7 +87,7 @@ class PipelineConfig(BaseModel, frozen=True):
     status: int = Status.READY
     max_allowed_restarts: int = 0
     curr_restarts: int = 0
-    stages: list[JobConfig | PipelineConfig | MutableJobConfig]
+    stages: list[JobConfig | PipelineConfig]
 
 
 class LoggingConfig(BaseModel, frozen=True):
