@@ -19,7 +19,7 @@ from .local_submitter import LocalSubmitterConfig
 PrimitiveType: TypeAlias = str | int | float | bool
 ParametersType: TypeAlias = Mapping[str, PrimitiveType | list[PrimitiveType]] | None
 SubmitFunctionType: TypeAlias = Callable[["Config"], None]
-JobFunctionType: TypeAlias = Callable[[ParametersType, SubmitFunctionType, logging.Logger], Status]
+JobFunctionType: TypeAlias = Callable[[ParametersType, SubmitFunctionType, Mapping[str, PrimitiveType], logging.Logger], Status]
 
 
 def _get_job_func(func_name_or_any: Any) -> JobFunctionType | None:

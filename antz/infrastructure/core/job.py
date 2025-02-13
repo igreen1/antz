@@ -27,10 +27,10 @@ def run_job(
     logger.debug('Running job %s, with func handle: %s', config.id, str(func_handle))
 
     params = resolve_variables(config.parameters, variables)
-    logger.debug('Running function with parameters %s', str(params)) # TODO lazy stringify
+    logger.debug('Running function with parameters %s', str(params))
 
     try:
-        ret = func_handle(params, submit_fn, logger)
+        ret = func_handle(params, submit_fn, variables, logger)
         if isinstance(ret, Status):
             status = ret
         else:
