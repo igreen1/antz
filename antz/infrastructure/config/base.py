@@ -7,7 +7,7 @@ from __future__ import annotations
 import importlib
 import logging
 import uuid
-from typing import Any, Callable, Literal, Mapping, TypeAlias
+from typing import Any, Callable, Literal, Mapping, TypeAlias, Union
 
 from pydantic import BaseModel, BeforeValidator, Field, field_serializer
 from typing_extensions import Annotated
@@ -17,9 +17,10 @@ from antz.infrastructure.core.status import Status
 from .local_submitter import LocalSubmitterConfig
 
 PrimitiveType: TypeAlias = str | int | float | bool
-ParametersType: TypeAlias = Mapping[str, PrimitiveType | list[PrimitiveType]] | None
+AntzConfig: TypeAlias = Union['Config', 'PipelineConfig', 'JobConfig']
+ParametersType: TypeAlias = Mapping[str, PrimitiveType | list[PrimitiveType] | AntzConfig] | None
 SubmitFunctionType: TypeAlias = Callable[["Config"], None]
-JobFunctionType: TypeAlias = Callable[[ParametersType, SubmitFunctionType, Mapping[str, PrimitiveType], logging.Logger], Status]
+JobFunctionType: TypeAlias = Callable[['ParametersType', SubmitFunctionType, Mapping[str, PrimitiveType], logging.Logger], Status]
 
 
 def _get_job_func(func_name_or_any: Any) -> JobFunctionType | None:

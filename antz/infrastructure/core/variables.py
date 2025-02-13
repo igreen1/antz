@@ -6,6 +6,9 @@ Parameters may contain variables which need resolving. This module
 import re
 from operator import add, mul, sub, truediv
 from typing import Mapping, overload
+from collections.abc import Mapping as MappingABC
+
+from pydantic import BaseModel
 
 from antz.infrastructure.config.base import ParametersType, PrimitiveType
 
@@ -18,17 +21,21 @@ def resolve_variables(
     """Provided paramters, return the parameters with any variables interpolated
 
     Args:
-        parameters (ParametersType): parameters to a job
-        variables (ParametersType): variables in scope for that job
+        parameters (ParametersType): ParametersType to a job
+        variables (Mapping[str, PrimitiveType]): variables in scope for that job
 
     Returns:
-        ParametersType: parameters of the job with variables interpolated
+        ParametersType: the job with variables interpolated
     """
     if parameters is None:
         return None
     if variables is None:
         return parameters
-    return {k: _resolve_value(val, variables) for k, val in parameters.items()}
+    params = parameters
+    return {k: _resolve_value(val, variables) 
+                                if not isinstance(val, (MappingABC, BaseModel)) 
+                                else val 
+                                for k, val in params.items()}
 
 
 @overload
@@ -52,7 +59,7 @@ def _resolve_value(
 
     Args:
         val (PrimitiveType): value of the parameters from the configuration
-        variables (ParametersType): variables in scope to resolve
+        variables (Mapping[str, PrimitiveType]): variables in scope to resolve
 
     Returns:
         PrimitiveType: provided value with any variables tokens
@@ -138,7 +145,7 @@ def _resolve_variable_expression(
 
     Args:
         variable_expression (str): an expression involving variables inside  %{}
-        variables (ParametersType): variables in scope to resolve
+        variables (Mapping[str, PrimitiveType]): variables in scope to resolve
 
     Returns:
         PrimitiveType: the variable expression as simplified as possible
@@ -170,7 +177,7 @@ def _resolve_variable_expression_recursive(
 
     Args:
         variable_expression (str): an expression involving variables inside  %{}
-        variables (ParametersType): variables in scope to resolve
+        variables (Mapping[str, PrimitiveType]): variables in scope to resolve
 
     Returns:
         PrimitiveType: the variable expression as simplified as possible
@@ -223,12 +230,12 @@ def _resolve_variable_expression_recursive(
     return ret
 
 
-def _resolve_token(var_token: str, variables: ParametersType) -> PrimitiveType:
+def _resolve_token(var_token: str, variables: Mapping[str, PrimitiveType]) -> PrimitiveType:
     """For the provided token, if its a variable name return the variable
 
     Args:
         var_token (str): name of a variable
-        variables (ParametersType): variables in scope to resolve
+        variables (Mapping[str, PrimitiveType]): variables in scope to resolve
 
     Returns:
         str: if it exists, the value of the variable of the token provided

@@ -34,13 +34,13 @@ class CreatePipelineFromMatrixParameters(BaseModel, frozen=True):
 def create_pipelines_from_matrix(parameters: ParametersType, submit_fn: Callable[[Config], None], variables: Mapping[str, PrimitiveType], *_, **__) -> Status:
     """Copy file or directory from parameters.soruce to parameters.destination
 
-    Parameters {
+    ParametersType {
         source: path/to/copy/from
         destination: path/to/copy/to
     }
 
     Args:
-        parameters (ParametersType): parameters for the copy function
+        parameters (ParametersType): ParametersType for the copy function
 
     Returns:
         Status: result of the job
@@ -59,7 +59,7 @@ def generate_configs(params: CreatePipelineFromMatrixParameters, variables: Mapp
     """Create a generator for row of the matrix
 
     Args:
-        params (CreatePipelineFromMatrixParameters): parameters describing where to get variables and the pipeline template
+        params (CreatePipelineFromMatrixParameters): ParametersType describing where to get variables and the pipeline template
 
     Yields:
         Generator[Config, None, None]: A generator where each iteration yields a config for a row of the matrix
