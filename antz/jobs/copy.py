@@ -20,13 +20,13 @@ class CopyParameters(BaseModel, frozen=True):
 def copy(parameters: ParametersType, *_, **__) -> Status:
     """Copy file or directory from parameters.soruce to parameters.destination
 
-    Parameters {
+    ParametersType {
         source: path/to/copy/from
         destination: path/to/copy/to
     }
 
     Args:
-        parameters (ParametersType): parameters for the copy function
+        parameters (ParametersType): ParametersType for the copy function
 
     Returns:
         Status: result of the job
@@ -51,7 +51,7 @@ def _copy_file(copy_parameters: CopyParameters) -> Status:
     """Copy a file from source to destination
 
     Args:
-        copy_parameters (CopyParameters): parameters of the copy job
+        copy_parameters (CopyParameters): ParametersType of the copy job
 
     Returns:
         Status: resulitng status after running the job
@@ -66,6 +66,9 @@ def _copy_file(copy_parameters: CopyParameters) -> Status:
     if os.path.exists(dst) and os.path.isdir(dst):
         return Status.ERROR
 
+    dst_dir = os.path.dirname(dst)
+    os.makedirs(dst_dir, exist_ok=True)
+
     try:
         shutil.copyfile(src, dst)
         return Status.SUCCESS
@@ -76,7 +79,7 @@ def _copy_file(copy_parameters: CopyParameters) -> Status:
 def _copy_dir(copy_parameters: CopyParameters) -> Status:
     """Copy a directory from a source to destination
     Args:
-        copy_parameters (CopyParameters): parameters of the copy job
+        copy_parameters (CopyParameters): ParametersType of the copy job
 
     Returns:
         Status: resulitng status after running the job

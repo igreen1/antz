@@ -18,7 +18,6 @@ def test_copy_file(tmpdir: str | os.PathLike[str]) -> None:
     dst_dir = os.path.join(dir_path, "b")
 
     os.mkdir(src_dir)
-    os.mkdir(dst_dir)
 
     src_file = os.path.join(src_dir, "asdf")
     dst_file = os.path.join(dst_dir, "hjk")
