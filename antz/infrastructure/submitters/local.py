@@ -114,6 +114,7 @@ class LocalProc(mp.Process):
         """Tell this process to kill itself"""
         with self._is_dead.get_lock():
             self._is_dead.value = new_val
+        self.logger.info('Killing local process runner')
 
     def run(self):
         """Infinitely loop waiting for a new job on the queue until the set_dead(True)"""
@@ -125,6 +126,7 @@ class LocalProc(mp.Process):
         while not self._is_dead.value:
             try:
                 next_config = self._queue.get(timeout=1)
+                self.logger.info('Got next configuration %s',  next_config.config.id)
                 with self._is_executing.get_lock():
                     self._is_executing.value = True
                 try:

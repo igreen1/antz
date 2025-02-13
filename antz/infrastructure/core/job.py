@@ -24,17 +24,21 @@ def run_job(
     """Run a job, which is the smallest atomic task of antz"""
     status: Status = Status.STARTING
     func_handle = config.function
+    logger.debug('Running job %s, with func handle: %s', config.id, str(func_handle))
 
     params = resolve_variables(config.parameters, variables)
+    logger.debug('Running function with parameters %s', str(params)) # TODO lazy stringify
 
     try:
-        ret = func_handle(params, submit_fn)
+        ret = func_handle(params, submit_fn, logger)
         if isinstance(ret, Status):
             status = ret
         else:
+            logger.warning('Return of function was not an ANTZ status, this is an automatic error')
             status = Status.ERROR  # bad return type is an error
-    except Exception as _exc:  # pylint: disable=broad-exception-caught
-        # logging?
+    except Exception as exc:  # pylint: disable=broad-exception-caught
+        logger.warning('Unexpected error', exc_info=exc)
         status = Status.ERROR
+    logger.debug('Finished job %s with status %s', config.id, str(status))
     return status
 

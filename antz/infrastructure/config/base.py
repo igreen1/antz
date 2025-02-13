@@ -19,7 +19,7 @@ from .local_submitter import LocalSubmitterConfig
 PrimitiveType: TypeAlias = str | int | float | bool
 ParametersType: TypeAlias = Mapping[str, PrimitiveType | list[PrimitiveType]] | None
 SubmitFunctionType: TypeAlias = Callable[["Config"], None]
-JobFunctionType: TypeAlias = Callable[[ParametersType, SubmitFunctionType], Status]
+JobFunctionType: TypeAlias = Callable[[ParametersType, SubmitFunctionType, logging.Logger], Status]
 
 
 def _get_job_func(func_name_or_any: Any) -> JobFunctionType | None:
@@ -84,6 +84,7 @@ class PipelineConfig(BaseModel, frozen=True):
     type: Literal["pipeline"]
     name: str = "pipeline"
     curr_stage: int = 0
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, validate_default=True)
     status: int = Status.READY
     max_allowed_restarts: int = 0
     curr_restarts: int = 0
