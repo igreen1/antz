@@ -28,7 +28,6 @@ def run(config: Mapping[str, Any]) -> None:
 
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser(prog="antz")
     parser.add_argument(
         "--config",

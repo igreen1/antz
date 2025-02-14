@@ -4,9 +4,9 @@ Parameters may contain variables which need resolving. This module
 """
 
 import re
+from collections.abc import Mapping as MappingABC
 from operator import add, mul, sub, truediv
 from typing import Mapping, overload
-from collections.abc import Mapping as MappingABC
 
 from pydantic import BaseModel
 
@@ -32,10 +32,14 @@ def resolve_variables(
     if variables is None:
         return parameters
     params = parameters
-    return {k: _resolve_value(val, variables) 
-                                if not isinstance(val, (MappingABC, BaseModel)) 
-                                else val 
-                                for k, val in params.items()}
+    return {
+        k: (
+            _resolve_value(val, variables)
+            if not isinstance(val, (MappingABC, BaseModel))
+            else val
+        )
+        for k, val in params.items()
+    }
 
 
 @overload
@@ -230,7 +234,9 @@ def _resolve_variable_expression_recursive(
     return ret
 
 
-def _resolve_token(var_token: str, variables: Mapping[str, PrimitiveType]) -> PrimitiveType:
+def _resolve_token(
+    var_token: str, variables: Mapping[str, PrimitiveType]
+) -> PrimitiveType:
     """For the provided token, if its a variable name return the variable
 
     Args:

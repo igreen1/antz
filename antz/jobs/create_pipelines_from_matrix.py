@@ -12,16 +12,21 @@ path3,nice_file
 This will create three pipelines and set the **variables** for each
     such that for the first pipeline "file_dst" variable is "path1"
 
-**This will overwrite variables** 
+**This will overwrite variables**
 """
 
 import os
-from typing import Callable, Generator, Any, Mapping
-import pandas as pd
+from typing import Any, Callable, Generator, Mapping
 
+import pandas as pd
 from pydantic import BaseModel
 
-from antz.infrastructure.config.base import ParametersType, PipelineConfig, Config, PrimitiveType
+from antz.infrastructure.config.base import (
+    Config,
+    ParametersType,
+    PipelineConfig,
+    PrimitiveType,
+)
 from antz.infrastructure.core.status import Status
 
 
@@ -31,7 +36,14 @@ class CreatePipelineFromMatrixParameters(BaseModel, frozen=True):
     matrix_path: str | os.PathLike[str]
     pipeline_config_template: PipelineConfig
 
-def create_pipelines_from_matrix(parameters: ParametersType, submit_fn: Callable[[Config], None], variables: Mapping[str, PrimitiveType], *_, **__) -> Status:
+
+def create_pipelines_from_matrix(
+    parameters: ParametersType,
+    submit_fn: Callable[[Config], None],
+    variables: Mapping[str, PrimitiveType],
+    *_,
+    **__,
+) -> Status:
     """Copy file or directory from parameters.soruce to parameters.destination
 
     ParametersType {
@@ -55,7 +67,9 @@ def create_pipelines_from_matrix(parameters: ParametersType, submit_fn: Callable
     return Status.SUCCESS
 
 
-def generate_configs(params: CreatePipelineFromMatrixParameters, variables: Mapping[str, PrimitiveType]) -> Generator[Config, None, None]:
+def generate_configs(
+    params: CreatePipelineFromMatrixParameters, variables: Mapping[str, PrimitiveType]
+) -> Generator[Config, None, None]:
     """Create a generator for row of the matrix
 
     Args:
@@ -69,26 +83,27 @@ def generate_configs(params: CreatePipelineFromMatrixParameters, variables: Mapp
     """
 
     case_matrix: pd.DataFrame
-    if os.path.splitext(params.matrix_path)[1] == '.csv':
+    if os.path.splitext(params.matrix_path)[1] == ".csv":
         case_matrix = pd.read_csv(params.matrix_path)
-    elif os.path.splitext(params.matrix_path)[1] == '.xlsx':
+    elif os.path.splitext(params.matrix_path)[1] == ".xlsx":
         case_matrix = pd.read_excel(params.matrix_path)
-    elif os.path.splitext(params.matrix_path)[1] in ('.parquet', '.parq'):
+    elif os.path.splitext(params.matrix_path)[1] in (".parquet", ".parq"):
         case_matrix = pd.read_parquet(params.matrix_path)
     else:
-        raise RuntimeError('Unknown file type for the case matrix provided')
-    
+        raise RuntimeError("Unknown file type for the case matrix provided")
+
     pipeline_base: dict[str, Any] = params.pipeline_config_template.model_dump()
 
     for idx, row in case_matrix.iterrows():
-        pipeline_base['name'] = f'pipeline_{idx}'
-        yield Config.model_validate({
-            'config': pipeline_base,
-            'variables': {
-                **variables, # keep outer scope 
-                **{ # overwrite outer scope with inner scope
-                    var_name: val 
-                    for var_name, val in zip(row.index, row)
-                }
+        pipeline_base["name"] = f"pipeline_{idx}"
+        yield Config.model_validate(
+            {
+                "config": pipeline_base,
+                "variables": {
+                    **variables,  # keep outer scope
+                    **{  # overwrite outer scope with inner scope
+                        var_name: val for var_name, val in zip(row.index, row)
+                    },
+                },
             }
-        })
+        )

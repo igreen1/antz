@@ -11,7 +11,7 @@ def run_manager(
     config: Config, submit_fn: Callable[[Config], None], logger: logging.Logger
 ) -> None:
     """Run the configuration"""
-    logger.debug('Manager starting up pipeline with id %d', config.config.id)
+    logger.debug("Manager starting up pipeline with id %d", config.config.id)
     run_pipeline(
         config=config.config,
         variables=config.variables,

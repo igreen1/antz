@@ -17,13 +17,18 @@ from antz.infrastructure.core.status import Status
 from .local_submitter import LocalSubmitterConfig
 
 PrimitiveType: TypeAlias = str | int | float | bool
-AntzConfig: TypeAlias = Union['Config', 'PipelineConfig', 'JobConfig']
-ParametersType: TypeAlias = Mapping[str, PrimitiveType | list[PrimitiveType] | AntzConfig] | None
+AntzConfig: TypeAlias = Union["Config", "PipelineConfig", "JobConfig"]
+ParametersType: TypeAlias = (
+    Mapping[str, PrimitiveType | list[PrimitiveType] | AntzConfig] | None
+)
 SubmitFunctionType: TypeAlias = Callable[["Config"], None]
-JobFunctionType: TypeAlias = Callable[['ParametersType', SubmitFunctionType, Mapping[str, PrimitiveType], logging.Logger], Status]
+JobFunctionType: TypeAlias = Callable[
+    ["ParametersType", SubmitFunctionType, Mapping[str, PrimitiveType], logging.Logger],
+    Status,
+]
 
 
-def _get_job_func(func_name_or_any: Any) -> JobFunctionType | None:
+def get_function_by_name(func_name_or_any: Any) -> Callable[..., Any] | None:
     """Links to the function described by config
 
     Args:
@@ -68,7 +73,7 @@ class JobConfig(BaseModel, frozen=True):
     type: Literal["job"]
     name: str = "some job"
     id: uuid.UUID = Field(default_factory=uuid.uuid4, validate_default=True)
-    function: Annotated[JobFunctionType, BeforeValidator(_get_job_func)]
+    function: Annotated[JobFunctionType, BeforeValidator(get_function_by_name)]
     parameters: ParametersType
 
     @field_serializer("function")
