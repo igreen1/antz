@@ -7,9 +7,11 @@ import queue
 import threading
 import time
 
-from antz.infrastructure.config.base import Config, InitialConfig, LoggingConfig
+from antz.infrastructure.config.base import (Config, InitialConfig,
+                                             LoggingConfig)
 from antz.infrastructure.core.manager import run_manager
-from antz.infrastructure.log.multiproc_logging import ANTZ_LOG_ROOT_NAME, get_listener
+from antz.infrastructure.log.multiproc_logging import (ANTZ_LOG_ROOT_NAME,
+                                                       get_listener)
 
 
 def run_local_submitter(config: InitialConfig) -> threading.Thread:

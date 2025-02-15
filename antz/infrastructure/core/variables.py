@@ -42,6 +42,11 @@ def resolve_variables(
     }
 
 
+def is_variable(token: PrimitiveType) -> bool:
+    """Returns true if the provided token is a variable expression"""
+    return VARIABLE_PATTERN.match(str(token)) is not None
+
+
 @overload
 def _resolve_value(
     val: PrimitiveType, variables: Mapping[str, PrimitiveType]

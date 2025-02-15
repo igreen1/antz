@@ -3,7 +3,8 @@
 import logging
 from typing import Callable, Mapping
 
-from antz.infrastructure.config.base import Config, PipelineConfig, PrimitiveType
+from antz.infrastructure.config.base import (Config, PipelineConfig,
+                                             PrimitiveType)
 from antz.infrastructure.core.job import run_job
 from antz.infrastructure.core.status import Status
 
@@ -31,6 +32,7 @@ def run_pipeline(
         curr_job = config.stages[config.curr_stage]
 
         final_flag: bool = False
+
         def submit_fn_flagged(config: Config) -> None:
             nonlocal final_flag
             final_flag = True
@@ -39,12 +41,18 @@ def run_pipeline(
         if isinstance(curr_job, PipelineConfig):
             logger.debug("Calling run_pipeline for %s", curr_job.id)
             ret_status = run_pipeline(
-                curr_job, variables=variables, submit_fn=submit_fn_flagged, logger=logger
+                curr_job,
+                variables=variables,
+                submit_fn=submit_fn_flagged,
+                logger=logger,
             )  # allows pipelines of pipelines
         else:
             logger.debug("Calling run_job %s", curr_job.id)
             ret_status = run_job(
-                curr_job, variables=variables, submit_fn=submit_fn_flagged, logger=logger
+                curr_job,
+                variables=variables,
+                submit_fn=submit_fn_flagged,
+                logger=logger,
             )
 
         if final_flag and ret_status != Status.FINAL:
@@ -66,7 +74,7 @@ def run_pipeline(
             logger.debug("Success in pipeline %s", config.id)
             success(config, variables=variables, submit_fn=submit_fn, logger=logger)
         else:
-            logger.critical('Job failed to update status, still %s', ret_status)
+            logger.critical("Job failed to update status, still %s", ret_status)
             return Status.ERROR
         return ret_status
 

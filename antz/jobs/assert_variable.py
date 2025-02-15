@@ -3,12 +3,11 @@
 import logging
 from typing import Mapping
 
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel
 
 from antz.infrastructure.config.base import (ParametersType, PrimitiveType,
                                              SubmitFunctionType)
 from antz.infrastructure.core.status import Status
-from antz.infrastructure.core.variables import is_variable
 
 
 class AssertVariableParameters(BaseModel, frozen=True):
