@@ -5,11 +5,9 @@ from typing import Mapping
 import pytest
 
 from antz.infrastructure.config.base import PrimitiveType
-from antz.infrastructure.core.variables import (
-    VARIABLE_PATTERN,
-    _resolve_value,
-    resolve_variables,
-)
+from antz.infrastructure.core.variables import (VARIABLE_PATTERN,
+                                                _resolve_value,
+                                                resolve_variables)
 
 
 def test_regex_pattern() -> None:

@@ -4,9 +4,9 @@ Each job performs one user-assigned task and returns its state.
 """
 
 import logging
-from typing import Callable, Mapping
+from typing import Mapping
 
-from antz.infrastructure.config.base import Config, JobConfig, PrimitiveType
+from antz.infrastructure.config.base import JobConfig, PrimitiveType
 from antz.infrastructure.core.status import Status
 from antz.infrastructure.core.variables import resolve_variables
 
@@ -14,7 +14,6 @@ from antz.infrastructure.core.variables import resolve_variables
 def run_job(
     config: JobConfig,
     variables: Mapping[str, PrimitiveType],
-    submit_fn: Callable[[Config], None],
     logger: logging.Logger,
 ) -> Status:
     """Run a job, which is the smallest atomic task of antz"""
@@ -26,7 +25,7 @@ def run_job(
     logger.debug("Running function with parameters %s", str(params))
 
     try:
-        ret = func_handle(params, submit_fn, variables, logger)
+        ret = func_handle(params, logger)
         if isinstance(ret, Status):
             status = ret
         else:

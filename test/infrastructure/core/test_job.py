@@ -64,7 +64,7 @@ def test_running_job_success() -> None:
     jc = JobConfig.model_validate(job_config)
 
     assert (
-        run_job(jc, variables={}, submit_fn=fake_submission, logger=logger)
+        run_job(jc, variables={}, logger=logger)
         == Status.SUCCESS
     )
 
@@ -79,7 +79,7 @@ def test_running_job_failure() -> None:
     jc = JobConfig.model_validate(job_config)
 
     assert (
-        run_job(jc, variables={}, submit_fn=fake_submission, logger=logger)
+        run_job(jc, variables={}, logger=logger)
         == Status.ERROR
     )
 
@@ -94,7 +94,7 @@ def test_running_job_exception() -> None:
     jc = JobConfig.model_validate(job_config)
 
     assert (
-        run_job(jc, variables={}, submit_fn=fake_submission, logger=logger)
+        run_job(jc, variables={}, logger=logger)
         == Status.ERROR
     )
 

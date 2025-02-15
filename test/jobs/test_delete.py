@@ -89,7 +89,6 @@ def test_delete_file_in_job(tmpdir: str | os.PathLike[str]) -> None:
         run_job(
             config=job_config,
             variables={"file_name": file_name, "tmpdir": os.fspath(tmpdir)},
-            submit_fn=lambda x: None,
             logger=logger,
         )
         == Status.SUCCESS
@@ -113,7 +112,6 @@ def test_delete_file_in_job_non_existing(tmpdir: str | os.PathLike[str]) -> None
         run_job(
             config=job_config,
             variables={"file_name": file_name, "tmpdir": os.fspath(tmpdir)},
-            submit_fn=lambda x: None,
             logger=logger,
         )
         == Status.ERROR
@@ -142,7 +140,6 @@ def test_delete_dir_in_job(tmpdir: str | os.PathLike[str]) -> None:
         run_job(
             config=job_config,
             variables={"dir_name": dir_name, "tmpdir": os.fspath(tmpdir)},
-            submit_fn=lambda x: None,
             logger=logger,
         )
         == Status.SUCCESS
@@ -166,7 +163,6 @@ def test_delete_dir_in_job_non_existing(tmpdir: str | os.PathLike[str]) -> None:
         run_job(
             config=job_config,
             variables={"file_name": file_name, "tmpdir": os.fspath(tmpdir)},
-            submit_fn=lambda x: None,
             logger=logger,
         )
         == Status.ERROR

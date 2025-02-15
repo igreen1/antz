@@ -3,9 +3,11 @@
 import logging
 from typing import Callable, Mapping
 
-from antz.infrastructure.config.base import (Config, PipelineConfig,
+from antz.infrastructure.config.base import (Config, JobConfig,
+                                             MutableJobConfig, PipelineConfig,
                                              PrimitiveType)
 from antz.infrastructure.core.job import run_job
+from antz.infrastructure.core.mutable_job import run_mutable_job
 from antz.infrastructure.core.status import Status
 
 
@@ -33,18 +35,30 @@ def run_pipeline(
 
         final_flag: bool = False
 
-        def submit_fn_flagged(config: Config) -> None:
-            nonlocal final_flag
-            final_flag = True
-            return submit_fn(config)
-
         logger.debug("Calling run_job %s", curr_job.id)
-        ret_status = run_job(
-            curr_job,
-            variables=variables,
-            submit_fn=submit_fn_flagged,
-            logger=logger,
-        )
+        if isinstance(curr_job, JobConfig):
+            ret_status = run_job(
+                curr_job,
+                variables=variables,
+                logger=logger,
+            )
+        elif isinstance(curr_job, MutableJobConfig):
+
+            def submit_fn_flagged(config: Config) -> None:
+                nonlocal final_flag
+                final_flag = True
+                return submit_fn(config)
+
+            ret_status = run_mutable_job(
+                curr_job,
+                variables=variables,
+                submit_fn=submit_fn_flagged,
+                pipeline_config=config,
+                logger=logger,
+            )
+        else:
+            logger.critical("Unknown job type")
+            return Status.ERROR
 
         if final_flag and ret_status != Status.FINAL:
             logger.error("Final Flag set but status is not final. Got %s", ret_status)
@@ -56,7 +70,7 @@ def run_pipeline(
                 "Error in stage %d of pipeline %s", config.curr_stage, config.id
             )
             restart(
-                config, variables=variables, submit_fn=submit_fn_flagged, logger=logger
+                config, variables=variables, submit_fn=submit_fn, logger=logger
             )  # optionally restart if setup for that
         elif ret_status == Status.FINAL:
             # TODO handle final statuses and error checking

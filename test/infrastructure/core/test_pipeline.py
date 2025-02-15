@@ -140,7 +140,7 @@ def test_disallow_job_after_submitter() -> None:
         test_queue.put(config)
 
     j1_config: dict = {
-        "type": "job",
+        "type": "mutable_job",
         "function": f"{__name__}.submitter_job",
         "parameters": {},
     }
@@ -156,9 +156,11 @@ def test_disallow_job_after_submitter() -> None:
     assert status == Status.ERROR
     assert test_queue.qsize() == 1
 
+
 def submitter_job(params, submit_fn, *args, **kwargs) -> Any:
     """Submits a configuration"""
-    submit_fn({'config'})
+    submit_fn({"config"})
+
 
 def successful_job(*args) -> Any:
     """Return success"""

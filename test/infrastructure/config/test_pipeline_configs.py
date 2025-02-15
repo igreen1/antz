@@ -1,11 +1,10 @@
 """Test the creation of a pipeline configuration"""
 
-from pydantic import ValidationError
 import pytest
+from pydantic import ValidationError
 
 from antz.infrastructure.config.base import JobConfig, PipelineConfig
 from antz.infrastructure.core.status import Status
-
 
 
 def fake_job_task(parameters, *args) -> Status:
