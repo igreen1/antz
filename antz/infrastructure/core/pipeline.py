@@ -5,7 +5,7 @@ from typing import Callable, Mapping
 
 from antz.infrastructure.config.base import Config, PipelineConfig, PrimitiveType
 from antz.infrastructure.core.job import run_job
-from antz.infrastructure.core.status import Status, is_final
+from antz.infrastructure.core.status import Status
 
 
 def run_pipeline(
@@ -29,16 +29,27 @@ def run_pipeline(
     if config.curr_stage < len(config.stages):
         # run the job
         curr_job = config.stages[config.curr_stage]
+
+        final_flag: bool = False
+        def submit_fn_flagged(config: Config) -> None:
+            nonlocal final_flag
+            final_flag = True
+            return submit_fn(config)
+
         if isinstance(curr_job, PipelineConfig):
             logger.debug("Calling run_pipeline for %s", curr_job.id)
             ret_status = run_pipeline(
-                curr_job, variables=variables, submit_fn=submit_fn, logger=logger
+                curr_job, variables=variables, submit_fn=submit_fn_flagged, logger=logger
             )  # allows pipelines of pipelines
         else:
             logger.debug("Calling run_job %s", curr_job.id)
             ret_status = run_job(
-                curr_job, variables=variables, submit_fn=submit_fn, logger=logger
+                curr_job, variables=variables, submit_fn=submit_fn_flagged, logger=logger
             )
+
+        if final_flag and ret_status != Status.FINAL:
+            logger.error("Final Flag set but status is not final. Got %s", ret_status)
+            return Status.ERROR
 
         # handle pipeline cleanup/termination
         if ret_status == Status.ERROR:
@@ -46,17 +57,17 @@ def run_pipeline(
                 "Error in stage %d of pipeline %s", config.curr_stage, config.id
             )
             restart(
-                config, variables=variables, submit_fn=submit_fn, logger=logger
+                config, variables=variables, submit_fn=submit_fn_flagged, logger=logger
             )  # optionally restart if setup for that
-        elif not is_final(ret_status):
-            logger.error(
-                "ERROR: Incomplete status - error in the ANTZ library is likely"
-            )
-            # error! shouldn't happen
-            return Status.ERROR
-        else:
+        elif ret_status == Status.FINAL:
+            # TODO handle final statuses and error checking
+            ...
+        elif ret_status == Status.SUCCESS:
             logger.debug("Success in pipeline %s", config.id)
             success(config, variables=variables, submit_fn=submit_fn, logger=logger)
+        else:
+            logger.critical('Job failed to update status, still %s', ret_status)
+            return Status.ERROR
         return ret_status
 
     return Status.ERROR

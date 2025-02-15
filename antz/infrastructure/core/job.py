@@ -18,7 +18,7 @@ def run_job(
     logger: logging.Logger,
 ) -> Status:
     """Run a job, which is the smallest atomic task of antz"""
-    status: Status = Status.STARTING
+    status: Status
     func_handle = config.function
     logger.debug("Running job %s, with func handle: %s", config.id, str(func_handle))
 
