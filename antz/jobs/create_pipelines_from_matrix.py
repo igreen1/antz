@@ -60,7 +60,7 @@ def create_pipelines_from_matrix(
     for new_config in generate_configs(pipeline_params, variables=variables):
         submit_fn(new_config)
 
-    return Status.SUCCESS
+    return Status.FINAL
 
 
 def generate_configs(

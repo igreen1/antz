@@ -73,4 +73,4 @@ def if_then(
             )
         )
 
-    return Status.SUCCESS
+    return Status.FINAL

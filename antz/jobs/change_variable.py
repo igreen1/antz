@@ -79,4 +79,4 @@ def change_variable(
         )
     )
 
-    return Status.SUCCESS
+    return Status.FINAL

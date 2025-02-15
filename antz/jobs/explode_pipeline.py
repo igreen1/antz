@@ -56,4 +56,4 @@ def explode_pipeline(
             )
         )
 
-    return Status.SUCCESS
+    return Status.FINAL

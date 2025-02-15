@@ -93,4 +93,4 @@ def compare(
             )
         )
 
-    return Status.SUCCESS
+    return Status.FINAL

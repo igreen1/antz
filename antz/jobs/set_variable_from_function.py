@@ -71,4 +71,4 @@ def set_variable_from_function(
         )
     )
 
-    return Status.SUCCESS
+    return Status.FINAL

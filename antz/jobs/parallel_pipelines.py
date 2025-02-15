@@ -67,4 +67,4 @@ def parallel_pipelines(
             Config.model_validate({"variables": variables, "config": new_pipeline})
         )
 
-    return Status.SUCCESS
+    return Status.FINAL
