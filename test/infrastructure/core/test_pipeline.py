@@ -133,6 +133,33 @@ def test_running_error_pipeline() -> None:
     assert test_queue.qsize() == 0
 
 
+def test_disallow_job_after_submitter() -> None:
+    test_queue = queue.Queue()
+
+    def submit_fn(config) -> None:
+        test_queue.put(config)
+
+    j1_config: dict = {
+        "type": "job",
+        "function": f"{__name__}.submitter_job",
+        "parameters": {},
+    }
+    j2_config: dict = {
+        "type": "job",
+        "function": f"{__name__}.successful_job",
+        "parameters": {},
+    }
+    pipeline_config = {"type": "pipeline", "stages": [j1_config, j2_config]}
+
+    pc = PipelineConfig.model_validate(pipeline_config)
+    status = run_pipeline(pc, variables={}, submit_fn=submit_fn, logger=logger)
+    assert status == Status.ERROR
+    assert test_queue.qsize() == 1
+
+def submitter_job(params, submit_fn, *args, **kwargs) -> Any:
+    """Submits a configuration"""
+    submit_fn({'config'})
+
 def successful_job(*args) -> Any:
     """Return success"""
     return Status.SUCCESS
