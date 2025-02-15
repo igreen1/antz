@@ -94,7 +94,7 @@ class PipelineConfig(BaseModel, frozen=True):
     status: int = Status.READY
     max_allowed_restarts: int = 0
     curr_restarts: int = 0
-    stages: list[JobConfig | PipelineConfig]
+    stages: list[JobConfig]
 
 
 class LoggingConfig(BaseModel, frozen=True):

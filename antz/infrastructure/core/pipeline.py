@@ -38,22 +38,13 @@ def run_pipeline(
             final_flag = True
             return submit_fn(config)
 
-        if isinstance(curr_job, PipelineConfig):
-            logger.debug("Calling run_pipeline for %s", curr_job.id)
-            ret_status = run_pipeline(
-                curr_job,
-                variables=variables,
-                submit_fn=submit_fn_flagged,
-                logger=logger,
-            )  # allows pipelines of pipelines
-        else:
-            logger.debug("Calling run_job %s", curr_job.id)
-            ret_status = run_job(
-                curr_job,
-                variables=variables,
-                submit_fn=submit_fn_flagged,
-                logger=logger,
-            )
+        logger.debug("Calling run_job %s", curr_job.id)
+        ret_status = run_job(
+            curr_job,
+            variables=variables,
+            submit_fn=submit_fn_flagged,
+            logger=logger,
+        )
 
         if final_flag and ret_status != Status.FINAL:
             logger.error("Final Flag set but status is not final. Got %s", ret_status)

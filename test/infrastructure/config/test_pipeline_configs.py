@@ -1,7 +1,11 @@
 """Test the creation of a pipeline configuration"""
 
+from pydantic import ValidationError
+import pytest
+
 from antz.infrastructure.config.base import JobConfig, PipelineConfig
 from antz.infrastructure.core.status import Status
+
 
 
 def fake_job_task(parameters, *args) -> Status:
@@ -44,7 +48,7 @@ def test_pipeline_with_job_config() -> None:
     assert p1.stages[0].function == fake_job_task
 
 
-def test_nested_pipeline() -> None:
+def test_disallow_nested_pipeline() -> None:
     """Test a pipeline config with apipeline inside of it"""
 
     pipeline_config = {
@@ -65,8 +69,5 @@ def test_nested_pipeline() -> None:
             }
         ],
     }
-    p1 = PipelineConfig.model_validate(pipeline_config)
-
-    assert isinstance(p1.stages[0], PipelineConfig)
-    assert isinstance(p1.stages[0].stages[0], JobConfig)
-    assert p1.stages[0].stages[0].function == fake_job_task
+    with pytest.raises(ValidationError):
+        PipelineConfig.model_validate(pipeline_config)
