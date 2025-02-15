@@ -1,9 +1,9 @@
 """Restarts the parent pipeline"""
 
-
 import logging
 import operator
-from typing import Mapping, Literal
+from typing import Any, Callable, Literal, Mapping
+
 from pydantic import BaseModel
 
 from antz.infrastructure.config.base import (Config, ParametersType,
@@ -19,7 +19,6 @@ comparators: dict[str, Callable[[Any, Any], bool]] = {
     ">": operator.gt,
     ">=": operator.ge,
 }
-
 
 
 class RestartPipelineConfig(BaseModel, frozen=True):
@@ -57,16 +56,13 @@ def restart_pipeline(
             params_parsed.left, params_parsed.right
         )
         if not result:
-            return Status.FINAL # final even if doesn't submit because it **could** submit
+            return (
+                Status.FINAL
+            )  # final even if doesn't submit because it **could** submit
 
-    logger.debug('Restarting pipeline %s', pipeline_config.id)
+    logger.debug("Restarting pipeline %s", pipeline_config.id)
     new_pipeline = pipeline_config.model_dump()
-    new_pipeline['curr_stage'] = 0
+    new_pipeline["curr_stage"] = 0
 
-    submit_fn(
-        Config.model_validate({
-            'variables': variables,
-            'config': new_pipeline
-        })
-    )
+    submit_fn(Config.model_validate({"variables": variables, "config": new_pipeline}))
     return Status.FINAL

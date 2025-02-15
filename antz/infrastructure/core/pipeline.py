@@ -43,7 +43,7 @@ def run_pipeline(
                 logger=logger,
             )
             if ret_status == Status.FINAL:
-                logger.critical('Non mutable job returned final!')
+                logger.critical("Non mutable job returned final!")
                 return Status.ERROR
         elif isinstance(curr_job, MutableJobConfig):
 
@@ -64,10 +64,14 @@ def run_pipeline(
             return Status.ERROR
 
         if final_flag and ret_status != Status.FINAL:
-            logger.critical("Final Flag set but status is not final. Got %s", ret_status)
+            logger.critical(
+                "Final Flag set but status is not final. Got %s", ret_status
+            )
             return Status.ERROR
         elif ret_status == Status.FINAL:
-            logger.error("Final flag is set but the final flag was not set. This is not normal")
+            logger.error(
+                "Final flag is set but the final flag was not set. This is not normal"
+            )
 
         # handle pipeline cleanup/termination
         if ret_status == Status.ERROR:
@@ -80,7 +84,9 @@ def run_pipeline(
         elif ret_status == Status.FINAL:
             # no need to do anthing, this pipeline is done
             if config.curr_stage + 1 < len(config.stages):
-                logger.error("Pipeline has unconsumed jobs but the status is final. This final job WILL NOT EXECUTE")
+                logger.error(
+                    "Pipeline has unconsumed jobs but the status is final. This final job WILL NOT EXECUTE"
+                )
                 return Status.ERROR
         elif ret_status == Status.SUCCESS:
             logger.debug("Success in pipeline %s", config.id)
