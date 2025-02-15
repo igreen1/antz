@@ -16,15 +16,12 @@ For example, a user could set up two models where the first takes arg 'a' and
 import logging
 from typing import Mapping
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
-from antz.infrastructure.config.base import (
-    Config,
-    ParametersType,
-    PipelineConfig,
-    PrimitiveType,
-    SubmitFunctionType,
-)
+from antz.infrastructure.core.variables import is_variable
+from antz.infrastructure.config.base import (Config, ParametersType,
+                                             PipelineConfig, PrimitiveType,
+                                             SubmitFunctionType)
 from antz.infrastructure.core.status import Status
 
 

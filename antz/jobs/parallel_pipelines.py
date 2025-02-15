@@ -16,13 +16,9 @@ This function will run any number of entirely user defined pipelines
 import logging
 from typing import Mapping, TypeAlias
 
-from antz.infrastructure.config.base import (
-    Config,
-    ParametersType,
-    PipelineConfig,
-    PrimitiveType,
-    SubmitFunctionType,
-)
+from antz.infrastructure.config.base import (Config, ParametersType,
+                                             PipelineConfig, PrimitiveType,
+                                             SubmitFunctionType)
 from antz.infrastructure.core.status import Status
 
 ParallelPipelinesParametersType: TypeAlias = list[PipelineConfig]

@@ -6,14 +6,10 @@ from typing import Callable, Mapping
 from pydantic import BaseModel, BeforeValidator
 from typing_extensions import Annotated
 
-from antz.infrastructure.config.base import (
-    Config,
-    ParametersType,
-    PipelineConfig,
-    PrimitiveType,
-    SubmitFunctionType,
-    get_function_by_name,
-)
+from antz.infrastructure.config.base import (Config, ParametersType,
+                                             PipelineConfig, PrimitiveType,
+                                             SubmitFunctionType,
+                                             get_function_by_name)
 from antz.infrastructure.core.status import Status
 
 

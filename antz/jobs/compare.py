@@ -10,13 +10,9 @@ from typing import Any, Callable, Literal, Mapping
 
 from pydantic import BaseModel
 
-from antz.infrastructure.config.base import (
-    Config,
-    ParametersType,
-    PipelineConfig,
-    PrimitiveType,
-    SubmitFunctionType,
-)
+from antz.infrastructure.config.base import (Config, ParametersType,
+                                             PipelineConfig, PrimitiveType,
+                                             SubmitFunctionType)
 from antz.infrastructure.core.status import Status
 
 

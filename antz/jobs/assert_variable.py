@@ -1,26 +1,26 @@
-"""Asserts that a variable is of a certain value
-"""
+"""Asserts that a variable is of a certain value"""
 
 import logging
 from typing import Mapping
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
-from antz.infrastructure.config.base import (
-    ParametersType,
-    PrimitiveType,
-    SubmitFunctionType,
-)
+from antz.infrastructure.config.base import (ParametersType, PrimitiveType,
+                                             SubmitFunctionType)
 from antz.infrastructure.core.status import Status
+from antz.infrastructure.core.variables import is_variable
+
 
 class AssertVariableParameters(BaseModel, frozen=True):
     """See assert_variable docstring"""
+
     var_to_check: str
     expected_value: PrimitiveType
 
+
 def assert_variable(
     parameters: ParametersType,
-    submit_fn: SubmitFunctionType, #
+    submit_fn: SubmitFunctionType,
     variables: Mapping[str, PrimitiveType],
     logger: logging.Logger,
     *_,
@@ -46,7 +46,9 @@ def assert_variable(
     params_parsed = AssertVariableParameters.model_validate(parameters)
 
     if params_parsed.var_to_check not in variables:
-        logger.error('assert_variable: var %s not in variable scope', params_parsed.var_to_check)
+        logger.error(
+            "assert_variable: var %s not in variable scope", params_parsed.var_to_check
+        )
 
     if variables[params_parsed.var_to_check] == params_parsed.expected_value:
         return Status.SUCCESS

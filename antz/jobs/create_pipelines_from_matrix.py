@@ -21,12 +21,8 @@ from typing import Any, Callable, Generator, Mapping
 import pandas as pd
 from pydantic import BaseModel
 
-from antz.infrastructure.config.base import (
-    Config,
-    ParametersType,
-    PipelineConfig,
-    PrimitiveType,
-)
+from antz.infrastructure.config.base import (Config, ParametersType,
+                                             PipelineConfig, PrimitiveType)
 from antz.infrastructure.core.status import Status
 
 
