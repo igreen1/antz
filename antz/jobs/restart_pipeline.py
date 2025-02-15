@@ -2,13 +2,32 @@
 
 
 import logging
-from typing import Mapping
+import operator
+from typing import Mapping, Literal
+from pydantic import BaseModel
 
 from antz.infrastructure.config.base import (Config, ParametersType,
                                              PipelineConfig, PrimitiveType,
                                              SubmitFunctionType)
 from antz.infrastructure.core.status import Status
 
+comparators: dict[str, Callable[[Any, Any], bool]] = {
+    "==": operator.eq,
+    "!=": operator.ne,
+    "<": operator.lt,
+    "<=": operator.le,
+    ">": operator.gt,
+    ">=": operator.ge,
+}
+
+
+
+class RestartPipelineConfig(BaseModel, frozen=True):
+    """Provides optional configuration of the restart pipeline job"""
+
+    comparator: Literal["<", ">", "<=", ">=", "==", "!="]
+    left: PrimitiveType
+    right: PrimitiveType
 
 
 def restart_pipeline(
@@ -31,6 +50,15 @@ def restart_pipeline(
     Returns:
         Status: SUCCESS if jobs successfully submitted; ERROR otherwise
     """
+
+    if parameters != {}:
+        params_parsed = RestartPipelineConfig.model_validate(parameters)
+        result = comparators[params_parsed.comparator](
+            params_parsed.left, params_parsed.right
+        )
+        if not result:
+            return Status.FINAL # final even if doesn't submit because it **could** submit
+
     logger.debug('Restarting pipeline %s', pipeline_config.id)
     new_pipeline = pipeline_config.model_dump()
     new_pipeline['curr_stage'] = 0
