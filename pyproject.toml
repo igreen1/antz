@@ -13,7 +13,8 @@ readme = "README.md"
 license = "MIT"
 version = "0.0.1"
 dependencies = [
-    "pydantic"
+    "pydantic",
+    "pandas"
 ]
 
 [tool.hatch.build.targets.wheel]
