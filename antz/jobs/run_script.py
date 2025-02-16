@@ -40,13 +40,18 @@ def run_script(parameters: ParametersType, *_, **__) -> Status:
     cmd = []
     if run_parameters.script_prepend is not None:
         cmd.extend(run_parameters.script_prepend)
+    if not os.path.exists(run_parameters.script_path):
+        raise RuntimeError('Unable to find %s', run_parameters.script_path)
     cmd.append(run_parameters.script_path)
     if run_parameters.script_args is not None:
         cmd.extend(run_parameters.script_args)
 
     try:
         ret = subprocess.run(
-            cmd, capture_output=True, cwd=run_parameters.current_working_dir
+            cmd, 
+            capture_output=True, 
+            cwd=run_parameters.current_working_dir,
+            shell=False,
         )
 
         if run_parameters.stdout_save_file is not None:

@@ -38,7 +38,7 @@ def run_local_submitter(config: InitialConfig) -> threading.Thread:
 
     def submit_pipeline(config: Config) -> None:
         """Closure for the unified task queue"""
-        return unified_task_queue.put(config)
+        return unified_task_queue.put(config.model_dump())
 
     submit_pipeline(config.analysis_config)
     proc_.start()
@@ -127,7 +127,7 @@ class LocalProc(mp.Process):
 
         while not self._is_dead.value:
             try:
-                next_config = self._queue.get(timeout=1)
+                next_config = Config.model_validate(self._queue.get(timeout=1))
                 self.logger.info("Got next configuration %s", next_config.config.id)
                 with self._is_executing.get_lock():
                     self._is_executing.value = True
