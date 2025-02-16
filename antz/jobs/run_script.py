@@ -1,7 +1,7 @@
 """Specify a script to run and run it"""
 
 import os
-import subprocess
+import subprocess #nosec
 import logging
 
 from pydantic import BaseModel, BeforeValidator
@@ -54,7 +54,7 @@ def run_script(parameters: ParametersType, logger: logging.Logger) -> Status:
             cwd=run_parameters.current_working_dir,
             shell=False,
             check=True,
-        )
+        ) # nosec
 
         if run_parameters.stdout_save_file is not None:
             with open(run_parameters.stdout_save_file, "wb") as fh:

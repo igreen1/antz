@@ -133,8 +133,8 @@ class LocalProc(mp.Process):
                     self._is_executing.value = True
                 try:
                     run_manager(next_config, submit_fn=submit_fn, logger=self.logger)
-                except Exception as _exc:  # pylint: disable=broad-exception-caught
-                    pass
+                except Exception as exc:  # pylint: disable=broad-exception-caught
+                    self.logger.error('Unknown error when running manager', exc_info=exc)
 
                 with self._is_executing.get_lock():
                     self._is_executing.value = False
