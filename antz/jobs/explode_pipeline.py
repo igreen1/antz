@@ -16,7 +16,7 @@ from antz.infrastructure.config.job_decorators import submitter_job
 from antz.infrastructure.core.status import Status
 
 
-class ExplodePipelinesParamters(BaseModel, frozen=True):
+class Parameters(BaseModel, frozen=True):
     """See explode pipeline docs"""
 
     num_pipelines: PositiveInt
@@ -43,7 +43,7 @@ def explode_pipeline(
         Status: SUCCESS if jobs successfully submitted; ERROR otherwise
     """
 
-    params_parsed = ExplodePipelinesParamters.model_validate(parameters)
+    params_parsed = Parameters.model_validate(parameters)
 
     logger.debug("Exploding pipelines into %d pipelines", params_parsed.num_pipelines)
 

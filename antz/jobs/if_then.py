@@ -18,7 +18,7 @@ from antz.infrastructure.config.job_decorators import submitter_job
 from antz.infrastructure.core.status import Status
 
 
-class IfThenParameters(BaseModel, frozen=True):
+class Parameters(BaseModel, frozen=True):
     """See if then docstring"""
 
     function: Annotated[Callable[..., bool], BeforeValidator(get_function_by_name)]
@@ -56,7 +56,7 @@ def if_then(
         Status: SUCCESS if job completed successfully
     """
 
-    params_parsed = IfThenParameters.model_validate(parameters)
+    params_parsed = Parameters.model_validate(parameters)
     if params_parsed.function(
         *(params_parsed.args if params_parsed.args is not None else [])
     ):

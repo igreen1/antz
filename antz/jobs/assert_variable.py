@@ -9,7 +9,7 @@ from antz.infrastructure.config.job_decorators import simple_job
 from antz.infrastructure.core.status import Status
 
 
-class AssertVariableParameters(BaseModel, frozen=True):
+class Parameters(BaseModel, frozen=True):
     """See assert_variable docstring"""
 
     given_val: str
@@ -20,7 +20,7 @@ class AssertVariableParameters(BaseModel, frozen=True):
 def assert_value(parameters: ParametersType, logger: logging.Logger) -> Status:
     """Return ERROR if the variable doesn't match expectations
 
-    AssertVariableParameters {
+    Parameters {
         var_to_check (str): name of the variable to check
         expected_value (PrimitiveType): expected value of the variable
     }
@@ -35,7 +35,7 @@ def assert_value(parameters: ParametersType, logger: logging.Logger) -> Status:
         Status: SUCCESS if the variable matches expected value; ERROR otherwise
     """
 
-    params_parsed = AssertVariableParameters.model_validate(parameters)
+    params_parsed = Parameters.model_validate(parameters)
 
     if params_parsed.given_val == params_parsed.expected_value:
         logger.debug("Assert resulted in true")

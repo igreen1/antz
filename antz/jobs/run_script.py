@@ -11,7 +11,7 @@ from antz.infrastructure.config.job_decorators import simple_job
 from antz.infrastructure.core.status import Status
 
 
-class RunScriptParameters(BaseModel, frozen=True):
+class Parameters(BaseModel, frozen=True):
     """Parameters for running a script"""
 
     script_path: Annotated[
@@ -35,7 +35,7 @@ def run_script(parameters: ParametersType, *_, **__) -> Status:
         Status: _description_
     """
 
-    run_parameters = RunScriptParameters.model_validate(parameters)
+    run_parameters = Parameters.model_validate(parameters)
 
     cmd = []
     if run_parameters.script_prepend is not None:

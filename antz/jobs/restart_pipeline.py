@@ -22,7 +22,7 @@ comparators: dict[str, Callable[[Any, Any], bool]] = {
 }
 
 
-class RestartPipelineConfig(BaseModel, frozen=True):
+class Parameters(BaseModel, frozen=True):
     """Provides optional configuration of the restart pipeline job"""
 
     comparator: Literal["<", ">", "<=", ">=", "==", "!="]
@@ -51,7 +51,7 @@ def restart_pipeline(
     """
 
     if parameters != {}:
-        params_parsed = RestartPipelineConfig.model_validate(parameters)
+        params_parsed = Parameters.model_validate(parameters)
         result = comparators[params_parsed.comparator](
             params_parsed.left, params_parsed.right
         )

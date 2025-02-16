@@ -16,7 +16,7 @@ from antz.infrastructure.core.status import Status
 
 from .local_submitter import LocalSubmitterConfig
 
-VALID_DECORATORS: set[str] = {"mutable_job", "submitter_job", "simpled_job"}
+VALID_DECORATORS: set[str] = {"mutable_job", "submitter_job", "simple_job"}
 
 PrimitiveType: TypeAlias = str | int | float | bool
 AntzConfig: TypeAlias = Union["Config", "PipelineConfig", "JobConfig"]

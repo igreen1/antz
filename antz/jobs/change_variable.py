@@ -23,7 +23,7 @@ from antz.infrastructure.config.base import (ParametersType, PipelineConfig,
 from antz.infrastructure.core.status import Status
 
 
-class ChangeVariableParameters(BaseModel, frozen=True):
+class Parameters(BaseModel, frozen=True):
     """See change variable docs"""
 
     left_hand_side: str
@@ -40,7 +40,7 @@ def change_variable(
 ) -> tuple[Status, Mapping[str, PrimitiveType]]:
     """Change a variable to a new value
 
-    ChangeVariableParameters {
+    Parameters {
         left_hand_side (str): name of the variable to change (left of equal sign)
         right_hand_side (str | int | bool | float): value to set the variable to
         pipeline_config_template (PipelineConfig): pipeline to spawn from this one
@@ -57,7 +57,7 @@ def change_variable(
         Status: SUCCESS if jobs successfully submitted; ERROR otherwise
     """
 
-    params_parsed = ChangeVariableParameters.model_validate(parameters)
+    params_parsed = Parameters.model_validate(parameters)
 
     logger.debug(
         "Changing variable %s to %s",

@@ -17,7 +17,7 @@ from antz.infrastructure.config.job_decorators import submitter_job
 from antz.infrastructure.core.status import Status
 
 
-class CompareParameters(BaseModel, frozen=True):
+class Parameters(BaseModel, frozen=True):
     """See compare function docstring"""
 
     comparator: Literal["<", ">", "<=", ">=", "==", "!="]
@@ -73,7 +73,7 @@ def compare(
         Status: SUCCESS if the job didn't error; else ERROR
     """
 
-    parameters_parsed = CompareParameters.model_validate(parameters)
+    parameters_parsed = Parameters.model_validate(parameters)
     logger.debug("Parameters successfully parsed")
 
     result = comparators[parameters_parsed.comparator](

@@ -17,7 +17,7 @@ from antz.infrastructure.config.job_decorators import simple_job
 from antz.infrastructure.core.status import Status
 
 
-class DeleteParameters(BaseModel, frozen=True):
+class Parameters(BaseModel, frozen=True):
     """The parameters required for the copy command"""
 
     path: Annotated[str, BeforeValidator(lambda x: x if os.path.exists(x) else None)]
@@ -37,7 +37,7 @@ def delete(parameters: ParametersType, logger: logging.Logger) -> Status:
         Status: Resulting status of the job after execution
     """
 
-    del_params = DeleteParameters.model_validate(parameters)
+    del_params = Parameters.model_validate(parameters)
     if os.path.isdir(del_params.path):
         try:
             shutil.rmtree(del_params.path)

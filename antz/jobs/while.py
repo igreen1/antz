@@ -22,7 +22,7 @@ comparators: dict[str, Callable[[Any, Any], bool]] = {
 }
 
 
-class RestartPipelineConfig(BaseModel, frozen=True):
+class Parameters(BaseModel, frozen=True):
     """Provides optional configuration of the restart pipeline job"""
 
     comparator: Literal["<", ">", "<=", ">=", "==", "!="]
@@ -51,7 +51,7 @@ def restart_pipeline(
     Returns:
         Status: SUCCESS if jobs successfully submitted; ERROR otherwise
     """
-    params_parsed = RestartPipelineConfig.model_validate(parameters)
+    params_parsed = Parameters.model_validate(parameters)
     if not isinstance(variables[params_parsed.var_name], (int, float)):
         raise ValueError("Variable for looping must be a numeric")
     result = comparators[params_parsed.comparator](

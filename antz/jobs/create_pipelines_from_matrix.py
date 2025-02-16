@@ -28,7 +28,7 @@ from antz.infrastructure.config.job_decorators import submitter_job
 from antz.infrastructure.core.status import Status
 
 
-class CreatePipelineFromMatrixParameters(BaseModel, frozen=True):
+class Parameters(BaseModel, frozen=True):
     """The parameters required for the copy command"""
 
     matrix_path: str | os.PathLike[str]
@@ -58,7 +58,7 @@ def create_pipelines_from_matrix(
     """
     if parameters is None:
         return Status.ERROR
-    pipeline_params = CreatePipelineFromMatrixParameters.model_validate(parameters)
+    pipeline_params = Parameters.model_validate(parameters)
 
     for new_config in generate_configs(pipeline_params, variables=variables):
         logger.debug("Submitting new pipeline: %s", new_config.config.id)
@@ -68,12 +68,12 @@ def create_pipelines_from_matrix(
 
 
 def generate_configs(
-    params: CreatePipelineFromMatrixParameters, variables: Mapping[str, PrimitiveType]
+    params: Parameters, variables: Mapping[str, PrimitiveType]
 ) -> Generator[Config, None, None]:
     """Create a generator for row of the matrix
 
     Args:
-        params (CreatePipelineFromMatrixParameters): ParametersType describing where to get variables and the pipeline template
+        params (Parameters): ParametersType describing where to get variables and the pipeline template
 
     Yields:
         Generator[Config, None, None]: A generator where each iteration yields a config for a row of the matrix

@@ -13,7 +13,7 @@ from antz.infrastructure.config.job_decorators import mutable_job
 from antz.infrastructure.core.status import Status
 
 
-class SetVariableFromFunctionParameters(BaseModel, frozen=True):
+class Parameters(BaseModel, frozen=True):
     """See change variable docs"""
 
     left_hand_side: str
@@ -53,7 +53,7 @@ def set_variable_from_function(
         Status: SUCCESS if jobs successfully submitted; ERROR otherwise
     """
 
-    params_parsed = SetVariableFromFunctionParameters.model_validate(parameters)
+    params_parsed = Parameters.model_validate(parameters)
 
     result = params_parsed.right_hand_side(
         *(params_parsed.args if params_parsed.args is not None else [])

@@ -11,7 +11,7 @@ from antz.infrastructure.config.job_decorators import simple_job
 from antz.infrastructure.core.status import Status
 
 
-class CopyParameters(BaseModel, frozen=True):
+class Parameters(BaseModel, frozen=True):
     """The parameters required for the copy command"""
 
     source: str
@@ -36,7 +36,7 @@ def copy(parameters: ParametersType, logger: logging.Logger) -> Status:
     """
     if parameters is None:
         return Status.ERROR
-    copy_parameters = CopyParameters.model_validate(parameters)
+    copy_parameters = Parameters.model_validate(parameters)
 
     source = copy_parameters.source
 
@@ -52,11 +52,11 @@ def copy(parameters: ParametersType, logger: logging.Logger) -> Status:
     return _copy_dir(copy_parameters)
 
 
-def _copy_file(copy_parameters: CopyParameters) -> Status:
+def _copy_file(copy_parameters: Parameters) -> Status:
     """Copy a file from source to destination
 
     Args:
-        copy_parameters (CopyParameters): ParametersType of the copy job
+        copy_parameters (Parameters): ParametersType of the copy job
 
     Returns:
         Status: resulitng status after running the job
@@ -81,7 +81,7 @@ def _copy_file(copy_parameters: CopyParameters) -> Status:
         return Status.ERROR
 
 
-def _copy_dir(copy_parameters: CopyParameters) -> Status:
+def _copy_dir(copy_parameters: Parameters) -> Status:
     """Copy a directory from a source to destination
     Args:
         copy_parameters (CopyParameters): ParametersType of the copy job
