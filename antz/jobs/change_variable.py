@@ -18,9 +18,8 @@ from typing import Mapping
 
 from pydantic import BaseModel
 
-from antz.infrastructure.config.base import (Config, ParametersType,
-                                             PipelineConfig, PrimitiveType,
-                                             SubmitFunctionType)
+from antz.infrastructure.config.base import (ParametersType, PipelineConfig,
+                                             PrimitiveType)
 from antz.infrastructure.core.status import Status
 
 
@@ -34,12 +33,11 @@ class ChangeVariableParameters(BaseModel, frozen=True):
 
 def change_variable(
     parameters: ParametersType,
-    submit_fn: SubmitFunctionType,
     variables: Mapping[str, PrimitiveType],
     logger: logging.Logger,
     *_,
     **__,
-) -> Status:
+) -> tuple[Status, Mapping[str, PrimitiveType]]:
     """Change a variable to a new value
 
     ChangeVariableParameters {
@@ -67,16 +65,9 @@ def change_variable(
         params_parsed.right_hand_side,
     )
 
-    submit_fn(
-        Config.model_validate(
-            {
-                "variables": {
-                    **variables,
-                    params_parsed.left_hand_side: params_parsed.right_hand_side,
-                },
-                "config": params_parsed.pipeline_config_template,
-            }
-        )
-    )
+    new_vars = {
+        **variables,
+        params_parsed.left_hand_side: params_parsed.right_hand_side,
+    }
 
-    return Status.FINAL
+    return Status.SUCCESS, new_vars

@@ -2,8 +2,10 @@
 
 import os
 import shutil
+import logging
 
 from pydantic import BaseModel
+from antz.infrastructure.config.job_decorators import simple_job
 
 from antz.infrastructure.config.base import ParametersType
 from antz.infrastructure.core.status import Status
@@ -17,7 +19,8 @@ class CopyParameters(BaseModel, frozen=True):
     infer_name: bool = False
 
 
-def copy(parameters: ParametersType, *_, **__) -> Status:
+@simple_job
+def copy(parameters: ParametersType, logger: logging.Logger) -> Status:
     """Copy file or directory from parameters.soruce to parameters.destination
 
     ParametersType {
@@ -42,8 +45,10 @@ def copy(parameters: ParametersType, *_, **__) -> Status:
     source_is_file = os.path.isfile(source)
 
     if source_is_file:
+        logger.debug('Copying file')
         return _copy_file(copy_parameters)
-
+    
+    logger.debug('Copying directory')
     return _copy_dir(copy_parameters)
 
 

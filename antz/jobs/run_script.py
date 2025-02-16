@@ -6,6 +6,7 @@ import subprocess
 from pydantic import BaseModel, BeforeValidator
 from typing_extensions import Annotated
 
+from antz.infrastructure.config.job_decorators import simple_job
 from antz.infrastructure.config.base import ParametersType
 from antz.infrastructure.core.status import Status
 
@@ -22,7 +23,7 @@ class RunScriptParameters(BaseModel, frozen=True):
     stderr_save_file: str | None = None
     current_working_dir: str | None = None
 
-
+@simple_job
 def run_script(parameters: ParametersType, *_, **__) -> Status:
     """Run the script provided by parameters
 

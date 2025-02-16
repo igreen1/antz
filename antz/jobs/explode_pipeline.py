@@ -8,6 +8,7 @@ import logging
 from typing import Mapping
 
 from pydantic import BaseModel, PositiveInt
+from antz.infrastructure.config.job_decorators import submitter_job
 
 from antz.infrastructure.config.base import (Config, ParametersType,
                                              PipelineConfig, PrimitiveType,
@@ -22,13 +23,13 @@ class ExplodePipelinesParamters(BaseModel, frozen=True):
     pipeline_config_template: PipelineConfig
 
 
+@submitter_job
 def explode_pipeline(
     parameters: ParametersType,
     submit_fn: SubmitFunctionType,
     variables: Mapping[str, PrimitiveType],
+    _pipeline_config: PipelineConfig,
     logger: logging.Logger,
-    *_,
-    **__,
 ) -> Status:
     """Create a series of parallel pipelines based on user input
 

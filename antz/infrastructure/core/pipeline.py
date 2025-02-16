@@ -3,9 +3,11 @@
 import logging
 from typing import Callable, Mapping
 
-from antz.infrastructure.config.base import (Config, JobConfig, PipelineConfig,
+from antz.infrastructure.config.base import (Config, JobConfig,
+                                             MutableJobConfig, PipelineConfig,
                                              PrimitiveType, SubmitterJobConfig)
 from antz.infrastructure.core.job import run_job
+from antz.infrastructure.core.mutable_job import run_mutable_job
 from antz.infrastructure.core.status import Status
 from antz.infrastructure.core.submitter_job import run_submitter_job
 
@@ -38,8 +40,8 @@ def run_pipeline(
         if isinstance(curr_job, JobConfig):
             ret_status = run_job(
                 curr_job,
-                variables=variables,
-                logger=logger,
+                variables,
+                logger,
             )
             if ret_status == Status.FINAL:
                 logger.critical("Non submitter job returned final!")
@@ -53,11 +55,17 @@ def run_pipeline(
 
             ret_status = run_submitter_job(
                 curr_job,
-                variables=variables,
-                submit_fn=submit_fn_flagged,
-                pipeline_config=config,
-                logger=logger,
+                variables,
+                submit_fn_flagged,
+                config,
+                logger,
             )
+        elif isinstance(curr_job, MutableJobConfig):
+            ret_status, new_vars = run_mutable_job(
+                curr_job, variables, logger
+            )
+            if ret_status == Status.SUCCESS:
+                variables = new_vars
         else:
             logger.critical("Unknown job type")
             return Status.ERROR
@@ -67,7 +75,7 @@ def run_pipeline(
                 "Final Flag set but status is not final. Got %s", ret_status
             )
             return Status.ERROR
-        elif ret_status == Status.FINAL:
+        elif not final_flag and ret_status == Status.FINAL:
             logger.error(
                 "Final flag is set but the final flag was not set. This is not normal"
             )

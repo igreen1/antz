@@ -9,7 +9,7 @@ import operator
 from typing import Any, Callable, Literal, Mapping
 
 from pydantic import BaseModel
-
+from antz.infrastructure.config.job_decorators import submitter_job
 from antz.infrastructure.config.base import (Config, ParametersType,
                                              PipelineConfig, PrimitiveType,
                                              SubmitFunctionType)
@@ -35,14 +35,13 @@ comparators: dict[str, Callable[[Any, Any], bool]] = {
     ">=": operator.ge,
 }
 
-
+@submitter_job
 def compare(
     parameters: ParametersType,
     submit_fn: SubmitFunctionType,
     variables: Mapping[str, PrimitiveType],
+    _pipeline_config: PipelineConfig,
     logger: logging.Logger,
-    *_,
-    **__,
 ) -> Status:
     """Split the execution based on a comparison between two values (left/right)
 

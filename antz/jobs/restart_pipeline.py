@@ -6,6 +6,7 @@ from typing import Any, Callable, Literal, Mapping
 
 from pydantic import BaseModel
 
+from antz.infrastructure.config.job_decorators import submitter_job
 from antz.infrastructure.config.base import (Config, ParametersType,
                                              PipelineConfig, PrimitiveType,
                                              SubmitFunctionType)
@@ -29,14 +30,13 @@ class RestartPipelineConfig(BaseModel, frozen=True):
     right: PrimitiveType
 
 
+@submitter_job
 def restart_pipeline(
     parameters: ParametersType,
     submit_fn: SubmitFunctionType,
     variables: Mapping[str, PrimitiveType],
     pipeline_config: PipelineConfig,
     logger: logging.Logger,
-    *_,
-    **__,
 ) -> Status:
     """Create a series of parallel pipelines based on user input
 

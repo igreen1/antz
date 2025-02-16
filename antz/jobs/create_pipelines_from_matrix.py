@@ -15,12 +15,13 @@ This will create three pipelines and set the **variables** for each
 **This will overwrite variables**
 """
 
+import logging
 import os
 from typing import Any, Callable, Generator, Mapping
 
 import pandas as pd
 from pydantic import BaseModel
-
+from antz.infrastructure.config.job_decorators import submitter_job
 from antz.infrastructure.config.base import (Config, ParametersType,
                                              PipelineConfig, PrimitiveType)
 from antz.infrastructure.core.status import Status
@@ -33,12 +34,13 @@ class CreatePipelineFromMatrixParameters(BaseModel, frozen=True):
     pipeline_config_template: PipelineConfig
 
 
+@submitter_job
 def create_pipelines_from_matrix(
     parameters: ParametersType,
     submit_fn: Callable[[Config], None],
     variables: Mapping[str, PrimitiveType],
-    *_,
-    **__,
+    _pipeline_config: PipelineConfig,
+    logger: logging.Logger,
 ) -> Status:
     """Copy file or directory from parameters.soruce to parameters.destination
 
@@ -58,6 +60,7 @@ def create_pipelines_from_matrix(
     pipeline_params = CreatePipelineFromMatrixParameters.model_validate(parameters)
 
     for new_config in generate_configs(pipeline_params, variables=variables):
+        logger.debug('Submitting new pipeline: %s', new_config.config.id)
         submit_fn(new_config)
 
     return Status.FINAL
@@ -92,6 +95,7 @@ def generate_configs(
 
     for idx, row in case_matrix.iterrows():
         pipeline_base["name"] = f"pipeline_{idx}"
+        print(pipeline_base)
         yield Config.model_validate(
             {
                 "config": pipeline_base,

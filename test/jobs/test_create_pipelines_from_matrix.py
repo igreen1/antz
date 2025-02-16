@@ -5,6 +5,7 @@ import os
 import queue
 import random
 import string
+import logging
 
 import pandas as pd
 
@@ -12,6 +13,9 @@ from antz.infrastructure.config.base import Config
 from antz.infrastructure.core.manager import run_manager
 
 FILE_LENGTH_MAX: int = 8000
+
+logger = logging.getLogger("test")
+logger.setLevel(0)
 
 
 def test_creating_multiple_pipelines_from_job(tmpdir) -> None:
@@ -70,8 +74,10 @@ def test_creating_multiple_pipelines_from_job(tmpdir) -> None:
         },
     }
 
+    parsed_input = Config.model_validate(input_config)
+
     run_manager(
-        Config.model_validate(input_config), submit_callable, logging.getLogger("test")
+        parsed_input, submit_callable, logger
     )
 
     ret = q.get(timeout=1)

@@ -6,10 +6,10 @@ from typing import Callable, Mapping
 from pydantic import BaseModel, BeforeValidator
 from typing_extensions import Annotated
 
-from antz.infrastructure.config.base import (Config, ParametersType,
-                                             PipelineConfig, PrimitiveType,
-                                             SubmitFunctionType,
+from antz.infrastructure.config.base import (ParametersType, PipelineConfig,
+                                             PrimitiveType,
                                              get_function_by_name)
+from antz.infrastructure.config.job_decorators import mutable_job
 from antz.infrastructure.core.status import Status
 
 
@@ -24,14 +24,12 @@ class SetVariableFromFunctionParameters(BaseModel, frozen=True):
     pipeline_config_template: PipelineConfig
 
 
+@mutable_job
 def set_variable_from_function(
     parameters: ParametersType,
-    submit_fn: SubmitFunctionType,
     variables: Mapping[str, PrimitiveType],
     logger: logging.Logger,
-    *_,
-    **__,
-) -> Status:
+) -> tuple[Status, Mapping[str, PrimitiveType]]:
     """Change a variable to a new value based on a function return
 
     ChangeVariableParameters {
@@ -62,13 +60,5 @@ def set_variable_from_function(
     )
     logger.debug("Changing variable %s to %s", params_parsed.left_hand_side, result)
 
-    submit_fn(
-        Config.model_validate(
-            {
-                "variables": {**variables, params_parsed.left_hand_side: result},
-                "config": params_parsed.pipeline_config_template,
-            }
-        )
-    )
-
-    return Status.FINAL
+    new_vars = {**variables, params_parsed.left_hand_side: result}
+    return Status.SUCCESS, new_vars

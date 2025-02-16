@@ -15,6 +15,7 @@ This function will run any number of entirely user defined pipelines
 
 import logging
 from typing import Mapping, TypeAlias
+from antz.infrastructure.config.job_decorators import submitter_job
 
 from antz.infrastructure.config.base import (Config, ParametersType,
                                              PipelineConfig, PrimitiveType,
@@ -23,13 +24,13 @@ from antz.infrastructure.core.status import Status
 
 ParallelPipelinesParametersType: TypeAlias = list[PipelineConfig]
 
-
+@submitter_job
 def parallel_pipelines(
     parameters: ParametersType,
     submit_fn: SubmitFunctionType,
     variables: Mapping[str, PrimitiveType],
+    _pipeline_config: PipelineConfig,
     logger: logging.Logger,
-    *_,
     **__,
 ) -> Status:
     """Create a series of parallel pipelines based on user input

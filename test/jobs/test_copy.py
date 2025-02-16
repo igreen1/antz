@@ -2,6 +2,7 @@
 
 import glob
 import os
+import logging
 import random
 import string
 
@@ -10,6 +11,8 @@ from antz.jobs.copy import copy
 
 FILE_LENGTH_MAX: int = 8000
 
+logger = logging.Logger('test')
+logger.setLevel(0)
 
 def test_copy_file(tmpdir: str | os.PathLike[str]) -> None:
 
@@ -33,7 +36,7 @@ def test_copy_file(tmpdir: str | os.PathLike[str]) -> None:
 
     copy_params = {"source": src_file, "destination": dst_file}
 
-    assert copy(copy_params) == Status.SUCCESS
+    assert copy(copy_params, logger) == Status.SUCCESS
 
     assert os.path.exists(dst_file)
 
@@ -73,7 +76,7 @@ def test_copy_dir(tmpdir: str | os.PathLike[str]) -> None:
         )
 
     copy_params = {"source": src_dir, "destination": dst_dir}
-    assert copy(copy_params) == Status.SUCCESS
+    assert copy(copy_params, logger) == Status.SUCCESS
 
     os.path.exists(dst_dir)
     for file in glob.glob(os.path.join(dst_dir, "*")):
@@ -116,7 +119,7 @@ def test_copy_dir_to_existing_file(tmpdir: str | os.PathLike[str]) -> None:
         fh.write("")
 
     copy_params = {"source": src_dir, "destination": dst_dir}
-    assert copy(copy_params) == Status.ERROR
+    assert copy(copy_params, logger) == Status.ERROR
 
 
 def test_copy_file_to_existing_dir(tmpdir: str | os.PathLike[str]) -> None:
@@ -142,7 +145,7 @@ def test_copy_file_to_existing_dir(tmpdir: str | os.PathLike[str]) -> None:
 
     copy_params = {"source": src_file, "destination": dst_dir}
 
-    assert copy(copy_params) == Status.ERROR
+    assert copy(copy_params, logger) == Status.ERROR
 
     assert os.path.exists(dst_dir)
     assert not os.path.exists(dst_file)

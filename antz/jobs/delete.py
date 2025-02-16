@@ -7,6 +7,8 @@ params = {
 
 import os
 import shutil
+import logging
+from antz.infrastructure.config.job_decorators import simple_job
 
 from pydantic import BaseModel, BeforeValidator
 from typing_extensions import Annotated
@@ -21,7 +23,8 @@ class DeleteParameters(BaseModel, frozen=True):
     path: Annotated[str, BeforeValidator(lambda x: x if os.path.exists(x) else None)]
 
 
-def delete(parameters: ParametersType, *_, **__) -> Status:
+@simple_job
+def delete(parameters: ParametersType, logger: logging.Logger) -> Status:
     """Deletes parameters.path
 
     Args:
@@ -38,12 +41,14 @@ def delete(parameters: ParametersType, *_, **__) -> Status:
     if os.path.isdir(del_params.path):
         try:
             shutil.rmtree(del_params.path)
-        except (PermissionError, FileNotFoundError, IOError):
+        except (PermissionError, FileNotFoundError, IOError) as exc:
+            logger.error('Unable to delete dir', exc_info=exc)
             return Status.ERROR
     elif os.path.isfile(del_params.path):
         try:
             os.remove(del_params.path)
-        except (PermissionError, FileNotFoundError, IOError):
+        except (PermissionError, FileNotFoundError, IOError) as exc:
+            logger.error('Unable to delete file', exc_info=exc)
             return Status.ERROR
     else:
         return Status.ERROR
