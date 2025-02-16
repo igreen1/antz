@@ -26,7 +26,7 @@ JobFunctionType: TypeAlias = Callable[
     ["ParametersType", logging.Logger],
     Status,
 ]
-MutableJobFunctionType: TypeAlias = Callable[
+SubmitterJobFunctionType: TypeAlias = Callable[
     [
         "ParametersType",
         SubmitFunctionType,
@@ -77,17 +77,22 @@ def get_function_by_name(func_name_or_any: Any) -> Callable[..., Any] | None:
     return func
 
 
-class MutableJobConfig(BaseModel, frozen=True):
-    """Configuration of a mutable job, with different function param types"""
+class SubmitterJobConfig(BaseModel, frozen=True):
+    """Configuration of a submitter job, with different function param types
+    These jobs gain access to the submit function and can submit
+        entirely new pipelines of execution
 
-    type: Literal["mutable_job"]
+    However, they must ALWAYS BE FINAL
+    """
+
+    type: Literal["submitter_job"]
     name: str = "some job"
     id: uuid.UUID = Field(default_factory=uuid.uuid4, validate_default=True)
-    function: Annotated[MutableJobFunctionType, BeforeValidator(get_function_by_name)]
+    function: Annotated[SubmitterJobFunctionType, BeforeValidator(get_function_by_name)]
     parameters: ParametersType
 
     @field_serializer("function")
-    def serialize_function(self, func: MutableJobFunctionType, _info):
+    def serialize_function(self, func: SubmitterJobFunctionType, _info):
         """To serialize function, store the import path to the func
         instead of its handle as a str
         """
@@ -121,7 +126,7 @@ class PipelineConfig(BaseModel, frozen=True):
     status: int = Status.READY
     max_allowed_restarts: int = 0
     curr_restarts: int = 0
-    stages: list[JobConfig | MutableJobConfig]
+    stages: list[JobConfig | SubmitterJobConfig]
 
 
 class LoggingConfig(BaseModel, frozen=True):

@@ -3,12 +3,11 @@
 import logging
 from typing import Callable, Mapping
 
-from antz.infrastructure.config.base import (Config, JobConfig,
-                                             MutableJobConfig, PipelineConfig,
-                                             PrimitiveType)
+from antz.infrastructure.config.base import (Config, JobConfig, PipelineConfig,
+                                             PrimitiveType, SubmitterJobConfig)
 from antz.infrastructure.core.job import run_job
-from antz.infrastructure.core.mutable_job import run_mutable_job
 from antz.infrastructure.core.status import Status
+from antz.infrastructure.core.submitter_job import run_submitter_job
 
 
 def run_pipeline(
@@ -43,16 +42,16 @@ def run_pipeline(
                 logger=logger,
             )
             if ret_status == Status.FINAL:
-                logger.critical("Non mutable job returned final!")
+                logger.critical("Non submitter job returned final!")
                 return Status.ERROR
-        elif isinstance(curr_job, MutableJobConfig):
+        elif isinstance(curr_job, SubmitterJobConfig):
 
             def submit_fn_flagged(config: Config) -> None:
                 nonlocal final_flag
                 final_flag = True
                 return submit_fn(config)
 
-            ret_status = run_mutable_job(
+            ret_status = run_submitter_job(
                 curr_job,
                 variables=variables,
                 submit_fn=submit_fn_flagged,

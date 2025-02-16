@@ -47,7 +47,7 @@ def test_creating_multiple_pipelines_from_job(tmpdir) -> None:
             "type": "pipeline",
             "stages": [
                 {
-                    "type": "mutable_job",
+                    "type": "submitter_job",
                     "function": "antz.jobs.create_pipelines_from_matrix.create_pipelines_from_matrix",
                     "parameters": {
                         "matrix_path": matrix_path,

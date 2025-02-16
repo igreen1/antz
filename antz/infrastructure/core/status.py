@@ -10,5 +10,6 @@ class Status(IntEnum):
 
     ERROR = auto()
     SUCCESS = auto()
+    MUTATED = auto()
     FINAL = auto()
     READY = auto()

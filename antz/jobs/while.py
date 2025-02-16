@@ -55,20 +55,15 @@ def restart_pipeline(
     result = comparators[params_parsed.comparator](
         variables[params_parsed.var_name], params_parsed.right
     )
-    
+
     if not result:
-        return (
-            Status.FINAL
-        )
+        return Status.FINAL
     logger.debug("Restarting pipeline %s", pipeline_config.id)
     new_pipeline = pipeline_config.model_dump()
     new_pipeline["curr_stage"] = 0
-    
-    variables[params_parsed.var_name] += 1 # type: ignore
 
-    submit_fn(Config.model_validate({
-        'variables': variables,
-        'config': new_pipeline
-    }))
+    variables[params_parsed.var_name] += 1  # type: ignore
+
+    submit_fn(Config.model_validate({"variables": variables, "config": new_pipeline}))
 
     return Status.FINAL

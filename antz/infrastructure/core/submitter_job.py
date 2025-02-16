@@ -1,31 +1,31 @@
-"""Mutable jobs are "final" jobs which will submit a new pipeline based
-Unlike simple jobs, mutable jobs have access to the outer scope, including
+"""Submitter jobs are "final" jobs which will submit a new pipeline based
+Unlike simple jobs, Submitter jobs have access to the outer scope, including
     variables and the parent pipeline configuration
 
 These types of jobs are much more powerful, allowing for the modification of the parent
     (eg., resetting the current stage) or dynamic variable updating
 
 But, of course, they introduce all kinds of problems. For example, static checking
-    to remove errors may not be possible if mutable jobs are present.
+    to remove errors may not be possible if Submitter jobs are present.
 
-Where possible, **avoid** mutable jobs. Earlier versions removed them due to
+Where possible, **avoid** Submitter jobs. Earlier versions removed them due to
     the danger posed by mutability
 
-Mutable jobs have a few very important rules
--> Mutable jobs must ALSO be the very last job in a pipeline
+Submitter jobs have a few very important rules
+-> Submitter jobs must ALSO be the very last job in a pipeline
 """
 
 import logging
 from typing import Callable, Mapping
 
-from antz.infrastructure.config.base import (Config, MutableJobConfig,
-                                             PipelineConfig, PrimitiveType)
+from antz.infrastructure.config.base import (Config, PipelineConfig,
+                                             PrimitiveType, SubmitterJobConfig)
 from antz.infrastructure.core.status import Status
 from antz.infrastructure.core.variables import resolve_variables
 
 
-def run_mutable_job(
-    config: MutableJobConfig,
+def run_submitter_job(
+    config: SubmitterJobConfig,
     variables: Mapping[str, PrimitiveType],
     submit_fn: Callable[[Config], None],
     pipeline_config: PipelineConfig,
@@ -54,6 +54,8 @@ def run_mutable_job(
         status = Status.ERROR
     logger.debug("Finished job %s with status %s", config.id, str(status))
     if status == Status.SUCCESS:
-        logger.debug("Mutable success turned into FINAL. ALl mutable jobs are FINAL")
-        return Status.FINAL  # reroute success to final for all mutable jobs
+        logger.debug(
+            "Submitter success turned into FINAL. ALl Submitter jobs are FINAL"
+        )
+        return Status.FINAL  # reroute success to final for all Submitter jobs
     return status

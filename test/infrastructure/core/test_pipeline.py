@@ -140,7 +140,7 @@ def test_disallow_job_after_submitter() -> None:
         test_queue.put(config)
 
     j1_config: dict = {
-        "type": "mutable_job",
+        "type": "submitter_job",
         "function": f"{__name__}.submitter_job",
         "parameters": {},
     }
