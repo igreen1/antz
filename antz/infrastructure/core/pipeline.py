@@ -142,7 +142,7 @@ def _run_child_job(
         logger.error(
             "Final flag is set but the final flag was not set. This is not normal"
         )
-    return Status.SUCCESS, variables
+    return ret_status, variables
 
 def _success(
     config: PipelineConfig,
