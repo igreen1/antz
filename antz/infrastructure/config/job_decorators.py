@@ -6,16 +6,21 @@ For example, passing a mutable function to a mutable job will result in a valida
     error at configuration init, hopefully reducing user error
 
 """
+
 import logging
 from typing import Callable, Mapping
 
 # avoid circular imports
-from antz.infrastructure.config.base import (JobFunctionType,
-                                             MutableJobFunctionType,
-                                             ParametersType, PipelineConfig,
-                                             PrimitiveType, Status,
-                                             SubmitFunctionType,
-                                             SubmitterJobFunctionType)
+from antz.infrastructure.config.base import (
+    JobFunctionType,
+    MutableJobFunctionType,
+    ParametersType,
+    PipelineConfig,
+    PrimitiveType,
+    Status,
+    SubmitFunctionType,
+    SubmitterJobFunctionType,
+)
 
 
 def mutable_job(
@@ -28,6 +33,7 @@ def mutable_job(
     1. Allow it to accept variable args if a user incorrectly marks job
     2. Allow for type checking in the pydantic model
     """
+
     def _mutable_job(
         parameters: ParametersType,
         variables: Mapping[str, PrimitiveType],
@@ -48,6 +54,7 @@ def submitter_job(fn: SubmitterJobFunctionType) -> SubmitterJobFunctionType:
     1. Allow it to accept variable args if a user incorrectly marks job
     2. Allow for type checking in the pydantic model
     """
+
     def _submitter_job(
         parameters: ParametersType,
         submit_fn: SubmitFunctionType,
@@ -69,6 +76,7 @@ def simple_job(
     1. Allow it to accept variable args if a user incorrectly marks job
     2. Allow for type checking in the pydantic model
     """
+
     def _simple_job(parameters: ParametersType, logger: logging.Logger, *_, **__):
         return fn(parameters, logger)
 

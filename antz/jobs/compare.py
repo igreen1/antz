@@ -3,6 +3,7 @@
 By default, ANTZ supports conditions based on primitive types (lt, gt, ge, le, ne, eq)
     but a user can specify their own comparator function to create a much more powerful operator
 """
+
 # pylint: disable=duplicate-code
 
 import logging
@@ -11,9 +12,13 @@ from typing import Any, Callable, Literal, Mapping
 
 from pydantic import BaseModel
 
-from antz.infrastructure.config.base import (Config, ParametersType,
-                                             PipelineConfig, PrimitiveType,
-                                             SubmitFunctionType)
+from antz.infrastructure.config.base import (
+    Config,
+    ParametersType,
+    PipelineConfig,
+    PrimitiveType,
+    SubmitFunctionType,
+)
 from antz.infrastructure.config.job_decorators import submitter_job
 from antz.infrastructure.core.status import Status
 
@@ -52,17 +57,17 @@ def compare(
 
     ParamterersType {
         "comparator" (Literal): can be
-            "<": left hand and right hand field required. 
+            "<": left hand and right hand field required.
                 True if left is less than right
-            "<=": left hand and right hand field required. 
+            "<=": left hand and right hand field required.
                 True if left is less than or equal to right
-            ">": left hand and right hand field required. 
+            ">": left hand and right hand field required.
                 True if left is greater than right
-            ">=": left hand and right hand field required. 
+            ">=": left hand and right hand field required.
                 True if left is greater than or equal to right
-            "!=": left hand and right hand field required. 
+            "!=": left hand and right hand field required.
                 True if left is not equal to right
-            "==": left hand and right hand field required. 
+            "==": left hand and right hand field required.
                 True if left is equal to right
         "left" (str | int | bool | float): left value for comparator expression
         "right" (str | int | bool | float): right value for comparator expression

@@ -7,11 +7,9 @@ import queue
 import threading
 import time
 
-from antz.infrastructure.config.base import (Config, InitialConfig,
-                                             LoggingConfig)
+from antz.infrastructure.config.base import Config, InitialConfig, LoggingConfig
 from antz.infrastructure.core.manager import run_manager
-from antz.infrastructure.log.multiproc_logging import (ANTZ_LOG_ROOT_NAME,
-                                                       get_listener)
+from antz.infrastructure.log.multiproc_logging import ANTZ_LOG_ROOT_NAME, get_listener
 
 
 def run_local_submitter(config: InitialConfig) -> threading.Thread:
@@ -134,7 +132,9 @@ class LocalProc(mp.Process):
                 try:
                     run_manager(next_config, submit_fn=submit_fn, logger=self.logger)
                 except Exception as exc:  # pylint: disable=broad-exception-caught
-                    self.logger.error('Unknown error when running manager', exc_info=exc)
+                    self.logger.error(
+                        "Unknown error when running manager", exc_info=exc
+                    )
 
                 with self._is_executing.get_lock():
                     self._is_executing.value = False

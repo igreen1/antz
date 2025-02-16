@@ -18,8 +18,11 @@ from typing import Mapping
 
 from pydantic import BaseModel
 
-from antz.infrastructure.config.base import (ParametersType, PipelineConfig,
-                                             PrimitiveType)
+from antz.infrastructure.config.base import (
+    ParametersType,
+    PipelineConfig,
+    PrimitiveType,
+)
 from antz.infrastructure.core.status import Status
 
 

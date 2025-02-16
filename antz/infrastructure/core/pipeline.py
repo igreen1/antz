@@ -3,9 +3,14 @@
 import logging
 from typing import Callable, Mapping
 
-from antz.infrastructure.config.base import (Config, JobConfig,
-                                             MutableJobConfig, PipelineConfig,
-                                             PrimitiveType, SubmitterJobConfig)
+from antz.infrastructure.config.base import (
+    Config,
+    JobConfig,
+    MutableJobConfig,
+    PipelineConfig,
+    PrimitiveType,
+    SubmitterJobConfig,
+)
 from antz.infrastructure.core.job import run_job
 from antz.infrastructure.core.mutable_job import run_mutable_job
 from antz.infrastructure.core.status import Status
@@ -39,11 +44,7 @@ def run_pipeline(
         curr_job = config.stages[config.curr_stage]
 
         ret_status, variables = _run_child_job(
-            curr_job,
-            config,
-            variables,
-            submit_fn,
-            logger
+            curr_job, config, variables, submit_fn, logger
         )
 
         # handle pipeline cleanup/termination
@@ -78,7 +79,7 @@ def _run_child_job(
     pipeline_config: PipelineConfig,
     variables: Mapping[str, PrimitiveType],
     submit_fn: Callable[[Config], None],
-    logger: logging.Logger
+    logger: logging.Logger,
 ) -> tuple[Status, Mapping[str, PrimitiveType]]:
     """Run the child job of a pipeline
 
@@ -134,15 +135,14 @@ def _run_child_job(
         return Status.ERROR, variables
 
     if final_flag and ret_status != Status.FINAL:
-        logger.critical(
-            "Final Flag set but status is not final. Got %s", ret_status
-        )
+        logger.critical("Final Flag set but status is not final. Got %s", ret_status)
         return Status.ERROR, variables
     if not final_flag and ret_status == Status.FINAL:
         logger.error(
             "Final flag is set but the final flag was not set. This is not normal"
         )
     return ret_status, variables
+
 
 def _success(
     config: PipelineConfig,

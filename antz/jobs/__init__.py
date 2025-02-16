@@ -2,7 +2,9 @@
 
 import importlib as _importlib
 from typing import Any as _Any
-from antz.infrastructure.config.base import get_function_by_name, VALID_DECORATORS
+
+from antz.infrastructure.config.base import VALID_DECORATORS, get_function_by_name
+
 
 def get_job_parameter_schema(job_full_name: str) -> dict[str, _Any] | None:
     """Get the required parameters for an antz job
@@ -27,9 +29,10 @@ def get_job_parameter_schema(job_full_name: str) -> dict[str, _Any] | None:
     except ModuleNotFoundError as _:
         return None
 
-    if hasattr(mod, 'Parameters'):
-        return getattr(mod, 'Parameters').schema_json()
+    if hasattr(mod, "Parameters"):
+        return getattr(mod, "Parameters").schema_json()
     return None
+
 
 def get_job_type(job_full_name: str) -> str | None:
     """Get the type of job (Mutable, submitter, simple)"""
@@ -37,22 +40,23 @@ def get_job_type(job_full_name: str) -> str | None:
     if func_handle is None:
         return func_handle
 
-    if func_handle.__qualname__.split('.')[0] in VALID_DECORATORS:
-        return func_handle.__qualname__.split('.')[0]
+    if func_handle.__qualname__.split(".")[0] in VALID_DECORATORS:
+        return func_handle.__qualname__.split(".")[0]
     return None
 
+
 __all__ = [
-    'assert_variable',
-    'change_variable',
-    'compare',
-    'copy',
-    'create_pipelines_from_matrix',
-    'delete',
-    'explode_pipeline',
-    'if_then',
-    'nop',
-    'parallel_pipelines',
-    'restart_pipeline',
-    'run_script',
-    'set_variable_from_function',
+    "assert_variable",
+    "change_variable",
+    "compare",
+    "copy",
+    "create_pipelines_from_matrix",
+    "delete",
+    "explode_pipeline",
+    "if_then",
+    "nop",
+    "parallel_pipelines",
+    "restart_pipeline",
+    "run_script",
+    "set_variable_from_function",
 ]

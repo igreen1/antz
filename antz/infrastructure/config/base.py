@@ -53,9 +53,9 @@ def get_function_by_name_strongly_typed(
     """Returns a function Calls get_function_by_name and checks that the function type is correct
 
     Uses strict rules for internal functions; otherwise uses non-strict
-    If strict is True, 
+    If strict is True,
         requires that the function is wrapped in the correct wrapper from job_decorators.py
-    if strict is false, 
+    if strict is false,
         if the function is not wrapped in any of those wrappers, will skip checking
 
     Args:

@@ -3,6 +3,7 @@ and makes a listener on that queue to write out from
     multiple processes. Requires an owner to manage it
     but reduces multiprocesisng weirdness from logging
 """
+
 import datetime
 import logging.handlers
 import multiprocessing as mp
@@ -16,7 +17,7 @@ ANTZ_LOG_ROOT_NAME: Final[str] = "antz"
 def get_listener(
     logging_config: LoggingConfig,
 ) -> tuple[mp.Queue, logging.handlers.QueueListener]:
-    """Get listener, which will handle messages published to a queue 
+    """Get listener, which will handle messages published to a queue
         and write them out to handlers based on configuration
 
     Args:

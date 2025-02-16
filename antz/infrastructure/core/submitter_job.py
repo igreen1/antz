@@ -14,12 +14,17 @@ Where possible, **avoid** Submitter jobs. Earlier versions removed them due to
 Submitter jobs have a few very important rules
 -> Submitter jobs must ALSO be the very last job in a pipeline
 """
+
 # pylint: disable=duplicate-code
 import logging
 from typing import Callable, Mapping
 
-from antz.infrastructure.config.base import (Config, PipelineConfig,
-                                             PrimitiveType, SubmitterJobConfig)
+from antz.infrastructure.config.base import (
+    Config,
+    PipelineConfig,
+    PrimitiveType,
+    SubmitterJobConfig,
+)
 from antz.infrastructure.core.status import Status
 from antz.infrastructure.core.variables import resolve_variables
 

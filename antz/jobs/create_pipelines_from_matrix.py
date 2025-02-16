@@ -22,8 +22,12 @@ from typing import Any, Callable, Generator, Mapping
 import pandas as pd
 from pydantic import BaseModel
 
-from antz.infrastructure.config.base import (Config, ParametersType,
-                                             PipelineConfig, PrimitiveType)
+from antz.infrastructure.config.base import (
+    Config,
+    ParametersType,
+    PipelineConfig,
+    PrimitiveType,
+)
 from antz.infrastructure.config.job_decorators import submitter_job
 from antz.infrastructure.core.status import Status
 
@@ -73,11 +77,11 @@ def generate_configs(
     """Create a generator for row of the matrix
 
     Args:
-        params (Parameters): ParametersType describing where to get variables 
+        params (Parameters): ParametersType describing where to get variables
             and the pipeline template
 
     Yields:
-        Generator[Config, None, None]: A generator where each iteration yields a 
+        Generator[Config, None, None]: A generator where each iteration yields a
             config for a row of the matrix
 
     Throws:
@@ -104,7 +108,7 @@ def generate_configs(
                 "config": pipeline_base,
                 "variables": {
                     **variables,  # keep outer scope
-                    **dict(zip(row.index, row))
+                    **dict(zip(row.index, row)),
                 },
             }
         )

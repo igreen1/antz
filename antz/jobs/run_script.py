@@ -1,8 +1,8 @@
 """Specify a script to run and run it"""
 
-import os
-import subprocess #nosec
 import logging
+import os
+import subprocess  # nosec
 
 from pydantic import BaseModel, BeforeValidator
 from typing_extensions import Annotated
@@ -42,7 +42,7 @@ def run_script(parameters: ParametersType, logger: logging.Logger) -> Status:
     if run_parameters.script_prepend is not None:
         cmd.extend(run_parameters.script_prepend)
     if not os.path.exists(run_parameters.script_path):
-        raise RuntimeError(f'Unable to find  {run_parameters.script_path}')
+        raise RuntimeError(f"Unable to find  {run_parameters.script_path}")
     cmd.append(run_parameters.script_path)
     if run_parameters.script_args is not None:
         cmd.extend(run_parameters.script_args)
@@ -54,7 +54,7 @@ def run_script(parameters: ParametersType, logger: logging.Logger) -> Status:
             cwd=run_parameters.current_working_dir,
             shell=False,
             check=True,
-        ) # nosec
+        )  # nosec
 
         if run_parameters.stdout_save_file is not None:
             with open(run_parameters.stdout_save_file, "wb") as fh:
