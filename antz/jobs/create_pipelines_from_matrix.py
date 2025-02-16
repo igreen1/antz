@@ -73,10 +73,12 @@ def generate_configs(
     """Create a generator for row of the matrix
 
     Args:
-        params (Parameters): ParametersType describing where to get variables and the pipeline template
+        params (Parameters): ParametersType describing where to get variables 
+            and the pipeline template
 
     Yields:
-        Generator[Config, None, None]: A generator where each iteration yields a config for a row of the matrix
+        Generator[Config, None, None]: A generator where each iteration yields a 
+            config for a row of the matrix
 
     Throws:
         RuntimeError: if the file type is not .parquet, .csv, or .xlsx
@@ -102,9 +104,7 @@ def generate_configs(
                 "config": pipeline_base,
                 "variables": {
                     **variables,  # keep outer scope
-                    **{  # overwrite outer scope with inner scope
-                        var_name: val for var_name, val in zip(row.index, row)
-                    },
+                    **dict(zip(row.index, row))
                 },
             }
         )

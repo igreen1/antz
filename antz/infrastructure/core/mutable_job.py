@@ -1,4 +1,5 @@
 """Mutable jobs allow the function to edit the variables of the outer scope"""
+# pylint: disable=duplicate-code
 
 import logging
 from copy import deepcopy

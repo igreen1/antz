@@ -2,6 +2,7 @@
 
 import os
 import subprocess
+import logging
 
 from pydantic import BaseModel, BeforeValidator
 from typing_extensions import Annotated
@@ -25,7 +26,7 @@ class Parameters(BaseModel, frozen=True):
 
 
 @simple_job
-def run_script(parameters: ParametersType, *_, **__) -> Status:
+def run_script(parameters: ParametersType, logger: logging.Logger) -> Status:
     """Run the script provided by parameters
 
     Args:
@@ -41,17 +42,18 @@ def run_script(parameters: ParametersType, *_, **__) -> Status:
     if run_parameters.script_prepend is not None:
         cmd.extend(run_parameters.script_prepend)
     if not os.path.exists(run_parameters.script_path):
-        raise RuntimeError('Unable to find %s', run_parameters.script_path)
+        raise RuntimeError(f'Unable to find  {run_parameters.script_path}')
     cmd.append(run_parameters.script_path)
     if run_parameters.script_args is not None:
         cmd.extend(run_parameters.script_args)
 
     try:
         ret = subprocess.run(
-            cmd, 
-            capture_output=True, 
+            cmd,
+            capture_output=True,
             cwd=run_parameters.current_working_dir,
             shell=False,
+            check=True,
         )
 
         if run_parameters.stdout_save_file is not None:
@@ -60,7 +62,9 @@ def run_script(parameters: ParametersType, *_, **__) -> Status:
         if run_parameters.stderr_save_file is not None:
             with open(run_parameters.stderr_save_file, "wb") as fh:
                 fh.write(ret.stderr)
-    except Exception as _exc:
+    except subprocess.CalledProcessError as exc:
+        logger.error("Unknown error in run_script", exc_info=exc)
+        # catch all errors because we don't know what will happen
         return Status.ERROR
 
     return Status.SUCCESS

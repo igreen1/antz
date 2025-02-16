@@ -2,6 +2,7 @@
 
 Each job performs one user-assigned task and returns its state.
 """
+# pylint: disable=duplicate-code
 
 import logging
 from typing import Mapping

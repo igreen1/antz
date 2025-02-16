@@ -1,3 +1,8 @@
+"""Simple wrapper that makes a logger which writes to a queue
+and makes a listener on that queue to write out from
+    multiple processes. Requires an owner to manage it
+    but reduces multiprocesisng weirdness from logging
+"""
 import datetime
 import logging.handlers
 import multiprocessing as mp
@@ -11,7 +16,8 @@ ANTZ_LOG_ROOT_NAME: Final[str] = "antz"
 def get_listener(
     logging_config: LoggingConfig,
 ) -> tuple[mp.Queue, logging.handlers.QueueListener]:
-    """Get listener, which will handle messages published to a queue and write them out to handlers based on configuration
+    """Get listener, which will handle messages published to a queue 
+        and write them out to handlers based on configuration
 
     Args:
         logging_config (LoggingConfig): configuration of this logging module
@@ -30,12 +36,12 @@ def get_listener(
 def _get_handlers(logging_config: LoggingConfig) -> list[logging.Handler]:
     """Return handlers for the given configuration"""
 
-    # TODO: implement logic
+    # FUTURE: improve handlers based on configuration
     return [_get_file_handler(logging_config)]
 
 
 def _get_file_handler(
-    logging_config: LoggingConfig,
+    _logging_config: LoggingConfig,
 ) -> logging.handlers.RotatingFileHandler:
     """For handlers for local file storage, return the file handler
 

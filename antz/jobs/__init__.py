@@ -13,7 +13,7 @@ def get_job_parameter_schema(job_full_name: str) -> dict[str, _Any] | None:
     Returns:
         dict[str, str]: {parameter_name -> type_name}
     """
-    
+
     if not isinstance(job_full_name, str):
         return None
 
@@ -36,7 +36,7 @@ def get_job_type(job_full_name: str) -> str | None:
     func_handle = get_function_by_name(job_full_name)
     if func_handle is None:
         return func_handle
-    
+
     if func_handle.__qualname__.split('.')[0] in VALID_DECORATORS:
         return func_handle.__qualname__.split('.')[0]
     return None
@@ -54,6 +54,5 @@ __all__ = [
     'parallel_pipelines',
     'restart_pipeline',
     'run_script',
-    'set_variables_from_function',
-    'while'
+    'set_variable_from_function',
 ]

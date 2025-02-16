@@ -34,7 +34,8 @@ def set_variable_from_function(
 
     ChangeVariableParameters {
         left_hand_side (str): name of the variable to change (left of equal sign)
-        right_hand_side (str): resolvable path to a specific function, including all the modules to import
+        right_hand_side (str): resolvable path to a specific function, 
+            including all the modules to import
             for example, if you'd call `from cool.fun.module import my_func` then you'd write
             "function": "cool.fun.module.my_func"
         args: list of args that will be * expanded into the function
