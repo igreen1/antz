@@ -1,9 +1,11 @@
 """Asserts that a variable is of a certain value"""
+
 import logging
+
 from pydantic import BaseModel
-from antz.infrastructure.config.job_decorators import simple_job
 
 from antz.infrastructure.config.base import ParametersType, PrimitiveType
+from antz.infrastructure.config.job_decorators import simple_job
 from antz.infrastructure.core.status import Status
 
 
@@ -15,10 +17,7 @@ class AssertVariableParameters(BaseModel, frozen=True):
 
 
 @simple_job
-def assert_value(
-    parameters: ParametersType,
-    logger: logging.Logger
-) -> Status:
+def assert_value(parameters: ParametersType, logger: logging.Logger) -> Status:
     """Return ERROR if the variable doesn't match expectations
 
     AssertVariableParameters {
@@ -39,7 +38,7 @@ def assert_value(
     params_parsed = AssertVariableParameters.model_validate(parameters)
 
     if params_parsed.given_val == params_parsed.expected_value:
-        logger.debug('Assert resulted in true')
+        logger.debug("Assert resulted in true")
         return Status.SUCCESS
-    logger.debug('Assert resulted in false')
+    logger.debug("Assert resulted in false")
     return Status.ERROR

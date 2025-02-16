@@ -1,13 +1,13 @@
 import logging
-from typing import Callable, Mapping, TYPE_CHECKING
+from typing import Callable, Mapping
 
 # avoid circular imports
 from antz.infrastructure.config.base import (JobFunctionType,
-                                            MutableJobFunctionType,
-                                            ParametersType, PipelineConfig,
-                                            PrimitiveType, Status,
-                                            SubmitFunctionType,
-                                            SubmitterJobFunctionType)
+                                             MutableJobFunctionType,
+                                             ParametersType, PipelineConfig,
+                                             PrimitiveType, Status,
+                                             SubmitFunctionType,
+                                             SubmitterJobFunctionType)
 
 
 def mutable_job(
@@ -47,9 +47,7 @@ def submitter_job(fn: SubmitterJobFunctionType) -> SubmitterJobFunctionType:
 
 
 def simple_job(
-    fn: Callable[
-        [ParametersType, logging.Logger], Status
-    ],
+    fn: Callable[[ParametersType, logging.Logger], Status],
 ) -> JobFunctionType:
     def _simple_job(parameters: ParametersType, logger: logging.Logger, *_, **__):
         return fn(parameters, logger)

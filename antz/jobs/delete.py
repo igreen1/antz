@@ -5,15 +5,15 @@ params = {
 }
 """
 
+import logging
 import os
 import shutil
-import logging
-from antz.infrastructure.config.job_decorators import simple_job
 
 from pydantic import BaseModel, BeforeValidator
 from typing_extensions import Annotated
 
 from antz.infrastructure.config.base import ParametersType
+from antz.infrastructure.config.job_decorators import simple_job
 from antz.infrastructure.core.status import Status
 
 
@@ -42,13 +42,13 @@ def delete(parameters: ParametersType, logger: logging.Logger) -> Status:
         try:
             shutil.rmtree(del_params.path)
         except (PermissionError, FileNotFoundError, IOError) as exc:
-            logger.error('Unable to delete dir', exc_info=exc)
+            logger.error("Unable to delete dir", exc_info=exc)
             return Status.ERROR
     elif os.path.isfile(del_params.path):
         try:
             os.remove(del_params.path)
         except (PermissionError, FileNotFoundError, IOError) as exc:
-            logger.error('Unable to delete file', exc_info=exc)
+            logger.error("Unable to delete file", exc_info=exc)
             return Status.ERROR
     else:
         return Status.ERROR

@@ -7,7 +7,7 @@ from __future__ import annotations
 import importlib
 import logging
 import uuid
-from typing import Any, Callable, Literal, Mapping, TypeAlias, Union, TYPE_CHECKING
+from typing import Any, Callable, Literal, Mapping, TypeAlias, Union
 
 from pydantic import BaseModel, BeforeValidator, Field, field_serializer
 from typing_extensions import Annotated, Unpack
@@ -16,12 +16,7 @@ from antz.infrastructure.core.status import Status
 
 from .local_submitter import LocalSubmitterConfig
 
-
-VALID_DECORATORS: set[str] = {
-    'mutable_job',
-    'submitter_job',
-    'simpled_job'
-}
+VALID_DECORATORS: set[str] = {"mutable_job", "submitter_job", "simpled_job"}
 
 PrimitiveType: TypeAlias = str | int | float | bool
 AntzConfig: TypeAlias = Union["Config", "PipelineConfig", "JobConfig"]
@@ -52,9 +47,11 @@ MutableJobFunctionType: TypeAlias = Callable[
 ]
 
 
-def get_function_by_name_strongly_typed(func_type_name: str) -> Callable[[Any], Callable[..., Any] | None]:
+def get_function_by_name_strongly_typed(
+    func_type_name: str,
+) -> Callable[[Any], Callable[..., Any] | None]:
     """Returns a function Calls get_function_by_name and checks that the function type is correct
-    
+
     Uses strict rules for internal functions; otherwise uses non-strict
     If strict is True, Requires that the function is wrapped in the correct wrapper from job_decorators.py
     if strict is false, if the function is not wrapped in any of those wrappers, will skip checking
@@ -63,29 +60,33 @@ def get_function_by_name_strongly_typed(func_type_name: str) -> Callable[[Any], 
         func_type_name: the name of the wrapper in job_decorators
     """
 
-    strict: bool = func_type_name.startswith('antz.jobs')
-
+    strict: bool = func_type_name.startswith("antz.jobs")
 
     if strict:
-        def strict_get_function_by_name(func_name_or_any: Any) -> Callable[..., Any] | None:
+
+        def strict_get_function_by_name(
+            func_name_or_any: Any,
+        ) -> Callable[..., Any] | None:
             func_handle = get_function_by_name(func_name_or_any)
             if func_handle is None:
                 return func_handle
             print(func_handle.__qualname__)
-            if func_handle.__qualname__.split('.')[0] != func_type_name:
+            if func_handle.__qualname__.split(".")[0] != func_type_name:
                 return None
             return func_handle
+
         return strict_get_function_by_name
-    
+
     def get_function_by_name_typed(func_name_or_any: Any) -> Callable[..., Any] | None:
         func_handle = get_function_by_name(func_name_or_any)
         if func_handle is None:
             return func_handle
-        if func_handle.__qualname__.split('.')[0] != func_type_name:
-            if func_handle.__qualname__.split('.')[0] not in VALID_DECORATORS:
-                return func_handle # doesn't have any of the valid wrappers
+        if func_handle.__qualname__.split(".")[0] != func_type_name:
+            if func_handle.__qualname__.split(".")[0] not in VALID_DECORATORS:
+                return func_handle  # doesn't have any of the valid wrappers
             return None
         return func_handle
+
     return get_function_by_name_typed
 
 
@@ -139,7 +140,10 @@ class MutableJobConfig(BaseModel, frozen=True):
     type: Literal["mutable_job"]
     name: str = "some job"
     id: uuid.UUID = Field(default_factory=uuid.uuid4, validate_default=True)
-    function: Annotated[MutableJobFunctionType, BeforeValidator(get_function_by_name_strongly_typed('mutable_job'))]
+    function: Annotated[
+        MutableJobFunctionType,
+        BeforeValidator(get_function_by_name_strongly_typed("mutable_job")),
+    ]
     parameters: ParametersType
 
     @field_serializer("function")
@@ -161,7 +165,10 @@ class SubmitterJobConfig(BaseModel, frozen=True):
     type: Literal["submitter_job"]
     name: str = "some job"
     id: uuid.UUID = Field(default_factory=uuid.uuid4, validate_default=True)
-    function: Annotated[SubmitterJobFunctionType, BeforeValidator(get_function_by_name_strongly_typed('submitter_job'))]
+    function: Annotated[
+        SubmitterJobFunctionType,
+        BeforeValidator(get_function_by_name_strongly_typed("submitter_job")),
+    ]
     parameters: ParametersType
 
     @field_serializer("function")
@@ -178,7 +185,10 @@ class JobConfig(BaseModel, frozen=True):
     type: Literal["job"]
     name: str = "some job"
     id: uuid.UUID = Field(default_factory=uuid.uuid4, validate_default=True)
-    function: Annotated[JobFunctionType, BeforeValidator(get_function_by_name_strongly_typed('simple_job'))]
+    function: Annotated[
+        JobFunctionType,
+        BeforeValidator(get_function_by_name_strongly_typed("simple_job")),
+    ]
     parameters: ParametersType
 
     @field_serializer("function")

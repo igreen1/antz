@@ -61,9 +61,7 @@ def run_pipeline(
                 logger,
             )
         elif isinstance(curr_job, MutableJobConfig):
-            ret_status, new_vars = run_mutable_job(
-                curr_job, variables, logger
-            )
+            ret_status, new_vars = run_mutable_job(curr_job, variables, logger)
             if ret_status == Status.SUCCESS:
                 variables = new_vars
         else:

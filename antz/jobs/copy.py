@@ -1,13 +1,13 @@
 """Copy job will copy a file or directory to another location"""
 
+import logging
 import os
 import shutil
-import logging
 
 from pydantic import BaseModel
-from antz.infrastructure.config.job_decorators import simple_job
 
 from antz.infrastructure.config.base import ParametersType
+from antz.infrastructure.config.job_decorators import simple_job
 from antz.infrastructure.core.status import Status
 
 
@@ -45,10 +45,10 @@ def copy(parameters: ParametersType, logger: logging.Logger) -> Status:
     source_is_file = os.path.isfile(source)
 
     if source_is_file:
-        logger.debug('Copying file')
+        logger.debug("Copying file")
         return _copy_file(copy_parameters)
-    
-    logger.debug('Copying directory')
+
+    logger.debug("Copying directory")
     return _copy_dir(copy_parameters)
 
 

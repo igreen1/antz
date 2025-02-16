@@ -21,9 +21,10 @@ from typing import Any, Callable, Generator, Mapping
 
 import pandas as pd
 from pydantic import BaseModel
-from antz.infrastructure.config.job_decorators import submitter_job
+
 from antz.infrastructure.config.base import (Config, ParametersType,
                                              PipelineConfig, PrimitiveType)
+from antz.infrastructure.config.job_decorators import submitter_job
 from antz.infrastructure.core.status import Status
 
 
@@ -60,7 +61,7 @@ def create_pipelines_from_matrix(
     pipeline_params = CreatePipelineFromMatrixParameters.model_validate(parameters)
 
     for new_config in generate_configs(pipeline_params, variables=variables):
-        logger.debug('Submitting new pipeline: %s', new_config.config.id)
+        logger.debug("Submitting new pipeline: %s", new_config.config.id)
         submit_fn(new_config)
 
     return Status.FINAL

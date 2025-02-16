@@ -9,10 +9,11 @@ import operator
 from typing import Any, Callable, Literal, Mapping
 
 from pydantic import BaseModel
-from antz.infrastructure.config.job_decorators import submitter_job
+
 from antz.infrastructure.config.base import (Config, ParametersType,
                                              PipelineConfig, PrimitiveType,
                                              SubmitFunctionType)
+from antz.infrastructure.config.job_decorators import submitter_job
 from antz.infrastructure.core.status import Status
 
 
@@ -34,6 +35,7 @@ comparators: dict[str, Callable[[Any, Any], bool]] = {
     ">": operator.gt,
     ">=": operator.ge,
 }
+
 
 @submitter_job
 def compare(

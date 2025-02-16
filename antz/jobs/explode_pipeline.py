@@ -8,11 +8,11 @@ import logging
 from typing import Mapping
 
 from pydantic import BaseModel, PositiveInt
-from antz.infrastructure.config.job_decorators import submitter_job
 
 from antz.infrastructure.config.base import (Config, ParametersType,
                                              PipelineConfig, PrimitiveType,
                                              SubmitFunctionType)
+from antz.infrastructure.config.job_decorators import submitter_job
 from antz.infrastructure.core.status import Status
 
 
