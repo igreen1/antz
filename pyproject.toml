@@ -24,3 +24,6 @@ skip-excluded-dirs = true
 
 [tool.pylint]
 ignore = "test"
+
+[tool.bandit]
+exclude_dirs = ["test"]
