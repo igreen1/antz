@@ -17,7 +17,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pylint pydantic black
+        pip install pylint pydantic black pandas
     - name: Analysing the code with pylint
       run: |
         pylint antz
